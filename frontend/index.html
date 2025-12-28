@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Somerset County YMCA Pentathlon Records (25 SCM)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Page Styles */
+        html, body {
+            overflow-x: hidden; /* Prevent page wobble */
+            width: 100%;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .accent-bg {
+            background-color: #0ea5e9; /* Sky 500 */
+        }
+        .accent-text {
+            color: #0ea5e9;
+        }
+        .table-header {
+            background-color: #f1f5f9;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        .record-row:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .record-row:hover {
+            background-color: #f0f9ff;
+        }
+        /* Mobile text wrapping adjustments */
+        .mobile-wrap {
+            white-space: normal !important;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-slate-800 leading-tight">
+                Somerset County YMCA Pentathlon Records
+                <span class="block text-sm sm:text-base font-medium text-slate-500 mt-2">as of 12/14/2025 (25 SCM)</span>
+            </h1>
+        <div class="mt-4 text-center">
+            <a href="https://www.usms.org/comp/meets/" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline font-medium text-sm transition-colors">
+                U.S. Masters Swimming Event Results Database &rarr;
+            </a>
+        </div>    
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-[1400px] mx-auto px-2 sm:px-6 lg:px-8 py-8">
+        
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                
+                <div class="space-y-1">
+                    <label for="filter-age" class="block text-sm font-medium text-slate-600">Age Group</label>
+                    <select id="filter-age" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
+                        <option value="all">All Age Groups</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label for="filter-event" class="block text-sm font-medium text-slate-600">Event</label>
+                    <select id="filter-event" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
+                        <option value="all">All Events</option>
+                    </select>
+                </div>
+
+                 <div class="space-y-1">
+                    <label for="filter-gender" class="block text-sm font-medium text-slate-600">Gender</label>
+                    <select id="filter-gender" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
+                        <option value="all">All</option>
+                        <option value="Women">Women</option>
+                        <option value="Men">Men</option>
+                        <option value="Mixed">Mixed</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1 lg:col-span-1">
+                    <label for="filter-name" class="block text-sm font-medium text-slate-600">Swimmer Name</label>
+                    <input type="text" id="filter-name" placeholder="Search name..." class="w-full rounded-md border-slate-300 py-2 pl-3 pr-3 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
+                </div>
+
+                <div>
+                    <button id="clear-filters" class="w-full rounded-md border border-transparent accent-bg px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition-colors">
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="records-container" class="space-y-8">
+            <div class="text-center text-slate-500 py-12">Loading records data...</div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-slate-500">
+                &copy; 2025 Somerset County YMCA. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const rawData = `
+"#22 Women 18-24 25 Free","14.72","12/15/2019 Cara Cannilla - SCYM"
+"#18 Women 18-24 50 Free","28.29","Rebecca L Cubbler - SVY 12/19/2021"
+"#11 Women 18-24 100 Free","1:00.95","Rebecca L Cubbler - SVY 12/19/2021"
+"#6 Women 18-24 200 Free","2:13.29","Rebecca L Cubbler SVY 12/19/2021"
+"#2 Women 18-24 400 Free","4:43.57","Rebecca L Cubbler SVY 12/19/2021"
+"#1 Women 18-24 1500 Free","18:33.28","Skylar E Ward - BUMS 12/10/2022"
+"#5 Women 18-24 50 Back","32.82","Sarah N Glisan - PSU 12/15/2019"
+"#20 Women 18-24 100 Back","1:10.14","12/19/2021 Megan Bull - SCYM"
+"#7 Women 18-24 25 Breast","16.99","Jackie Greening UC03 12/11/2022"
+"#21 Women 18-24 50 Breast","37.48","Jackie Greening UC03 12/11/2022"
+"#17 Women 18-24 100 Breast","119.28 :","Megan Bull - SCYM 12/19/2021"
+"#15 Women 18-24 25 Fly","15.80","Jackie Greening - UC03 12/11/2022"
+"#9 Women 18-24 50 Fly","30.12","12/17/2023 Mary Laurita - SCYM"
+"#4 Women 18-24 100 Fly","1:08.70","Megan Bull - SCYM 12/19/2021"
+"#19 Women 18-24 200 Fly","2:46.81","Abigail Sheridan - LASH 12/8/2024"
+"#13 Women 18-24 100 IM","1:10.26","Mary Laurita - SCYM 12/17/2023"
+"#8 Women 18-24 200 IM","2:34.63","Megan Bull - SCYM 12/19/2021"
+"#3 Women 18-24 400 IM","5:30.30","Skylar E Ward - BUMS 12/11/2022"
+"#22 Women 25-29 25 Free","15.22","Jacqueline LeSeur UC07 12/17/2017"
+"#18 Women 25-29 50 Free","27.45","Megan Bull - SCYM 12/14/2025"
+"#11 Women 25-29 100 Free","59.03","Megan Bull - SCYM 12/17/2023"
+"#6 Women 25-29 200 Free","2:06.90","12/17/2023 Megan Bull - SCYM"
+"#2 Women 25-29 400 Free","4:28.40","Megan Bull - SCYM 12/17/2023"
+"#1 Women 25-29 1500 Free","17:43.83","Megan Bull SCYM 12/16/2023"
+"#5 Women 25-29 50 Back","31.54","Megan Bull - SCYM 12/14/2025"
+"#20 Women 25-29 100 Back","1:17.32","12/14/2025 Isabella Lu - SCYM"
+"#16 Women 25-29 200 Back","2:33.64","Megan Bull - SCYM 12/8/2024"
+"#7 Women 25-29 25 Breast","17.57","12/11/2022 Nicki Robibero - UC03"
+"#21 Women 25-29 50 Breast","35.06","Megan Bull - SCYM 12/14/2025"
+"#17 Women 25-29 100 Breast","1:15.81","Megan Bull - SCYM 12/17/2023"
+"#10 Women 25-29 200 Breast","2:49.67","12/8/2024 Megan Bull - SCYM"
+"#15 Women 25-29 25 Fly","15.51","12/19/2021 Staci Schaffling - 1776"
+"#9 Women 25-29 50 Fly","29.97","12/14/2025 Megan Bull - SCYM"
+"#4 Women 25-29 100 Fly","1:13.91","12/19/2021 Laura Stone - SVY"
+"#19 Women 25-29 200 Fly","2:37.80","12/8/2024 Megan Bull - SCYM"
+"#13 Women 25-29 100 IM","1:07.18","12/14/2025 Megan Bull - SCYM"
+"#8 Women 25-29 200 IM","2:55.99","Isabella Lu - SCYM 12/14/2025"
+"#3 Women 25-29 400 IM","5:12.67","12/8/2024 Megan Bull - SCYM"
+"#22 Women 30-34 25 Free","13.69","Christy Brunner - UC08 12/19/2021"
+"#18 Women 30-34 50 Free","29.86","Christy Brunner - UC08 12/19/2021"
+"#11 Women 30-34 100 Free","1:06.63","Christy Brunner UC08 12/19/2021"
+"#6 Women 30-34 200 Free","2:29.90","12/8/2024 Morgan Brighenti LASH"
+"#2 Women 30-34 400 Free","4:54.27","12/19/2021 Krysten M Sciacca CHEL"
+"#1 Women 30-34 1500 Free","18:57.87","12/10/2022 Krysten Sciacca CHEL"
+"#12 Women 30-34 25 Back","16.99","12/8/2024 Kristen Moll - SCYM"
+"#5 Women 30-34 50 Back","36.85","12/11/2022 Anne Laurita - SCYM"
+"#20 Women 30-34 100 Back","1:14.35","12/16/2018 Krysten Sciacca CHEL"
+"#16 Women 30-34 200 Back","240.11 :","12/10/2016 Marissa Licata NEM"
+"#7 Women 30-34 25 Breast","16.31","12/14/2025 Morgan O Brighenti LASH"
+"#21 Women 30-34 50 Breast","37.92","Morgan O Brighenti LASH 12/14/2025"
+"#17 Women 30-34 100 Breast","1:22.37","Morgan O Brighenti LASH 12/14/2025"
+"#10 Women 30-34 200 Breast","2:57.17","12/16/2018 Krysten Sciacca - CHEL"
+"#15 Women 30-34 25 Fly","16.02","Carolyn Seiter - RBAY 12/14/2025"
+"#9 Women 30-34 50 Fly","34.31","12/17/2023 Wendy Liu - SCYM"
+"#4 Women 30-34 100 Fly","1:19.75","Gabriella Dellarciprete- SCYM 12/8/2024"
+"#19 Women 30-34 200 Fly","2:58.47","12/17/2017 Kim Mingi - BCTM"
+"#13 Women 30-34 100 IM","1:16.80","12/17/2023 Wendy Liu - SCYM"
+"#8 Women 30-34 200 IM","2:53.11","12/8/2024 Gabriella Dellarciprete - SCYM"
+"#3 Women 30-34 400 IM","5:25.24","12/16/2018 Krysten Sciacca - CHEL"
+"#22 Women 35-39 25 Free","14.19","12/17/2017 Lauren Post - SCYM"
+"#18 Women 35-39 50 Free","32.15","12/16/2018 Emily Palmieri - LASH"
+"#11 Women 35-39 100 Free","1:05.48","12/19/2021 Ana Ossa - LHY"
+"#6 Women 35-39 200 Free","2:25.15","12/8/2024 Victoria Marshall - 1776"
+"#2 Women 35-39 400 Free","5:03.01","12/17/2023 Krysten M Sciacca CHEL"
+"#1 Women 35-39 1500 Free","18:54.62","12/7/2024 Krysten Sciacca CHEL"
+"#12 Women 35-39 25 Back","16.03","12/17/2023 Christie Raleigh Crossley- UC07"
+"#5 Women 35-39 50 Back","30.10","12/14/2025 Erin McGraw Leegan GVM"
+"#20 Women 35-39 100 Back","1:05.26","12/14/2025 Erin McGraw Leegan - GVM"
+"#16 Women 35-39 200 Back","2:27.41","12/14/2025 Erin McGraw Leegan GVM"
+"#7 Women 35-39 25 Breast","20.30","12/17/2017 Robyn Glaser - SCYM"
+"#21 Women 35-39 50 Breast","49.70","12/15/2019 Angela Vietmeier - XCL"
+"#17 Women 35-39 100 Breast","1:25.56","12/19/2021 Ana Ossa - LHY"
+"#10 Women 35-39 200 Breast","310.28 :","12/8/2024 Victoria Marshall - 1776"
+"#15 Women 35-39 25 Fly","15.63","12/16/2018 Erin Smith - GWMS"
+"#9 Women 35-39 50 Fly","28.93","12/14/2025 Erin McGraw Leegan GVM"
+"#4 Women 35-39 100 Fly","1:19.22","12/19/2021 Mingi Kim MDYM"
+"#19 Women 35-39 200 Fly","2:47.81","12/8/2024 Victoria Marshall - 1776"
+"#13 Women 35-39 100 IM","1:07.14","12/14/2025 Erin McGraw Leegan GVM"
+"#8 Women 35-39 200 IM","2:51.00","12/19/2021 Mingi Kim - MDYM"
+"#3 Women 35-39 400 IM","517.91 :","12/14/2025 Erin McGraw Leegan - GVM"
+"#22 Women 40-44 25 Free","16.22","12/19/2021 Judy Amorosa - UC07"
+"#18 Women 40-44 50 Free","29.53","12/17/2023 Tatiana Kundla - UC06"
+"#11 Women 40-44 100 Free","1:04.94","12/8/2024 Tatiana Kundla UC06"
+"#6 Women 40-44 200 Free","2:27.75","12/14/2025 Cynthia Roberts - LASH"
+"#2 Women 40-44 400 Free","5:11.03","12/14/2025 Cynthia Roberts - LASH"
+"#1 Women 40-44 1500 Free","20:04.56","12/13/2025 Cynthia Roberts LASH"
+"#12 Women 40-44 25 Back","21.06","12/17/2017 Ellen Ryan SCYM"
+"#5 Women 40-44 50 Back","34.68","12/17/2023 Tatiana Kundla - UC06"
+"#20 Women 40-44 100 Back","1:29.59","12/11/2022 Emily Caldwell - RMT"
+"#16 Women 40-44 200 Back","3:24.90","12/10/2016 Jennifer Kyff - WM"
+"#21 Women 40-44 50 Breast","40.27","12/15/2019 Paola Morchio - SCYM"
+"#17 Women 40-44 100 Breast","1:27.22","12/8/2024 Tatiana Kundla UC06"
+"#10 Women 40-44 200 Breast","3:09.50","12/15/2019 Paola Morchio - SCYM"
+"#15 Women 40-44 25 Fly","14.44","12/17/2023 Tatiana Kundla UC06"
+"#9 Women 40-44 50 Fly","32.10","12/17/2023 Tatiana Kundla - UC06"
+"#4 Women 40-44 100 Fly","1:14.53","12/8/2024 Tatiana Kundla - UC06"
+"#19 Women 40-44 200 Fly","3:40.68","12/10/2016 Jennifer Kyff - WM"
+"#13 Women 40-44 100 IM","1:14.01","12/17/2023 Tatiana Kundla - UC06"
+"#8 Women 40-44 200 IM","2:44.80","12/8/2024 Tatiana Kundla - UC06"
+"#3 Women 40-44 400 IM","7:06.46","12/10/2016 Jennifer Kyff - WM"
+"#22 Women 45-49 25 Free","15.65","12/17/2017 Galina Dineva - GSM"
+"#18 Women 45-49 50 Free","30.58","12/10/2016 Beth Bigham - BERK"
+"#11 Women 45-49 100 Free","1:06.95","12/17/2017 Alison Hayden - TTM"
+"#6 Women 45-49 200 Free","2:23.76","12/15/2019 Alison Hayden SCYM"
+"#2 Women 45-49 400 Free","4:59.50","12/17/2017 Alison Hayden TTM"
+"#1 Women 45-49 1500 Free","19:23.64","12/17/2017 Alison Hayden TTM"
+"#12 Women 45-49 25 Back","25.78","12/16/2018 Kelly Young - SCYM"
+"#5 Women 45-49 50 Back","35.70","12/8/2024 Juliet Coulthard - YM"
+"#20 Women 45-49 100 Back","1:13.49","12/16/2018 Michelle Davidson GSM"
+"#16 Women 45-49 200 Back","2:53.75","12/15/2019 Alison Hayden - SCYM"
+"#7 Women 45-49 25 Breast","21.32","12/19/2021 Tanya Hamilton - CFSC"
+"#21 Women 45-49 50 Breast","36.36","12/17/2023 Sanna Greenberg - PAA"
+"#17 Women 45-49 100 Breast","119.53 :","12/17/2023 Sanna Greenberg PAA"
+"#10 Women 45-49 200 Breast","3:09.62","12/15/2019 Alison Hayden - SCYM"
+"#15 Women 45-49 25 Fly","18.87","Laura DeVito - SCYM 12/17/2017"
+"#9 Women 45-49 50 Fly","34.31","12/8/2024 Sanna Greenberg - PAA"
+"#4 Women 45-49 100 Fly","1:12.97","12/16/2018 Alison Hayden - SCYM"
+"#19 Women 45-49 200 Fly","248.03 :","12/16/2018 Alison Hayden SCYM"
+"#13 Women 45-49 100 IM","1:16.26","12/17/2017 Beth Bigham - BERK"
+"#8 Women 45-49 200 IM","2:44.13","12/16/2018 Alison Hayden - SCYM"
+"#3 Women 45-49 400 IM","5:45.63","12/15/2019 Alison Hayden SCYM"
+"#22 Women 50-54 25 Free","14.82","12/17/2023 Kristen Guth - SCYM"
+"#18 Women 50-54 50 Free","31.01","12/10/2016 Megan Tompkins - SCYM"
+"#11 Women 50-54 100 Free","1:07.01","12/10/2016 Megan Tompkins SCYM"
+"#6 Women 50-54 200 Free","2:28.96","12/10/2016 Megan E Tompkins - SCYM"
+"#2 Women 50-54 400 Free","5:23.59","12/10/2017 Megan E Tompkins SCYM"
+"#1 Women 50-54 1500 Free","19:01.59","12/17/2017 Laurie Hug - 1776"
+"#12 Women 50-54 25 Back","20.25","12/16/2018 Gloria O'Connell - RBAY"
+"#5 Women 50-54 50 Back","31.83","12/15/2019 Susan 0 Williams - 1693"
+"#20 Women 50-54 100 Back","1:18.67","12/11/2022 Michelle Davidson GSM"
+"#16 Women 50-54 200 Back","2:46.97","12/10/2016 Laurie Hug - 1776"
+"#7 Women 50-54 25 Breast","21.19","12/19/2021 Amber-Sky Green - GWMS"
+"#21 Women 50-54 50 Breast","47.56","12/11/2022 Miren U Libano UC07"
+"#17 Women 50-54 100 Breast","1:23.38","12/16/2018 Fall Willeboordse BCTМ"
+"#10 Women 50-54 200 Breast","3:06.15","12/10/2016 Laurie Hug 1776"
+"#15 Women 50-54 25 Fly","18.47","12/8/2024 Kelley Andreus - LASH"
+"#9 Women 50-54 50 Fly","31.52","12/16/2018 Fall Willeboordse BCTM"
+"#4 Women 50-54 100 Fly","1:10.52","12/16/2018 Fall Willeboordse BСТМ"
+"#19 Women 50-54 200 Fly","2:41.63","12/10/2016 Laurie Hug - 1776"
+"#13 Women 50-54 100 IM","1:19.06","12/17/2017 Laurie Hug - 1776"
+"#8 Women 50-54 200 IM","2:44.61","12/17/2017 Laurie Hug - 1776"
+"#3 Women 50-54 400 IM","5:44.31","12/17/2017 Laurie Hug - 1776"
+"#22 Women 55-59 25 Free","14.34","12/17/2017 Laurie Ditommaso GSM"
+"#18 Women 55-59 50 Free","31.95","12/17/2017 Marie Restrepo 1693"
+"#11 Women 55-59 100 Free","1:14.45","12/10/2016 Deborah R Cipriano - GSM"
+"#6 Women 55-59 200 Free","2:41.57","12/10/2016 Deborah R Cipriano GSM"
+"#2 Women 55-59 400 Free","5:37.62","12/10/2016 Deborah R Cipriano - GSM"
+"#1 Women 55-59 1500 Free","19:42.32","12/18/2021 Laurie Hug - 1776"
+"#12 Women 55-59 25 Back","20.48","12/8/2024 Jennifer Korten - UC06"
+"#5 Women 55-59 50 Back","39.08","12/19/2021 Lorna Cialdella-Morehead - SCYM"
+"#20 Women 55-59 100 Back","1:17.35","12/16/2018 Stephanie Saucy 1776"
+"#16 Women 55-59 200 Back","2:46.04","12/15/2019 Stephanie Saucy 1776"
+"#7 Women 55-59 25 Breast","23.23","12/8/2024 Adele Morgan - SCYM"
+"#21 Women 55-59 50 Breast","42.22","12/16/2018 Rebecca Kalibat - GSM"
+"#17 Women 55-59 100 Breast","1:32.02","12/16/2018 Rebecca Kalibat - GSM"
+"#10 Women 55-59 200 Breast","318.14 :","12/16/2018 Rebecca Kalibat - GSM"
+"#15 Women 55-59 25 Fly","19.21","12/8/2024 Adele Morgan - SCYM"
+"#9 Women 55-59 50 Fly","36.73","12/17/2017 Marie Restrepo 1693"
+"#4 Women 55-59 100 Fly","1:19.59","12/16/2018 Stephanie Saucy 1776"
+"#19 Women 55-59 200 Fly","2:58.57","12/19/2021 Laurie Hug 1776"
+"#13 Women 55-59 100 IM","1:20.32","12/17/2017 Laurie Ditommaso GSM"
+"#8 Women 55-59 200 IM","2:52.12","12/19/2021 Laurie Hug - 1776"
+"#3 Women 55-59 400 IM","5:56.06","12/19/2021 Laurie Hug - 1776"
+"#22 Women 60-64 25 Free","17.31","12/15/2019 Tricia Hiller - SCYM"
+"#18 Women 60-64 50 Free","33.32","12/15/2019 Deborah Cipriano GSM"
+"#11 Women 60-64 100 Free","1:12.95","12/10/2016 Nancy Steadman Martin GSM"
+"#6 Women 60-64 200 Free","2:30.48","12/10/2016 Nancy Steadman Martin - GSM"
+"#2 Women 60-64 400 Free","512.77 :","12/10/2016 Nancy Steadman Martin GSM"
+"#1 Women 60-64 1500 Free","20:38.60","12/10/2016 Nancy Steadman Martin GSM"
+"#12 Women 60-64 25 Back","27.94","12/15/2019 Leisa Begley - SCYM"
+"#5 Women 60-64 50 Back","40.42","12/14/2025 Lorna Cialdella-Morehead - SCYM"
+"#20 Women 60-64 100 Back","1:26.63","12/14/2025 Kathy Lynch - UC07"
+"#16 Women 60-64 200 Back","3:01.85","12/16/2018 Nancy Steadman Martin - GSM"
+"#7 Women 60-64 25 Breast","22.55","12/8/2024 Laura Tyson - JACM"
+"#21 Women 60-64 50 Breast","42.96","12/19/2021 Barbara B Burke 1776"
+"#17 Women 60-64 100 Breast","1:37.74","12/17/2023 Barbara Burke 1776"
+"#10 Women 60-64 200 Breast","340.90 :","12/16/2018 Nancy Steaman Martin - GSM"
+"#15 Women 60-64 25 Fly","17.09","12/14/2025 Marianne Hassan - ADMS"
+"#9 Women 60-64 50 Fly","37.16","12/19/2021 Barbara B Burke 1776"
+"#4 Women 60-64 100 Fly","1:24.53","12/19/2021 Barbara B Burke 1776"
+"#19 Women 60-64 200 Fly","3:07.29","12/16/2018 Nancy Steadman Martin - GSM"
+"#13 Women 60-64 100 IM","1:25.70","12/14/2025 Lorna Cialdella-Morehead - SCYM"
+"#8 Women 60-64 200 IM","3:05.10","12/19/2021 Barbara B Burke 1776"
+"#3 Women 60-64 400 IM","6:21.48","12/16/2018 Nancy Steadman Martin - GSM"
+"#22 Women 65-69 25 Free","22.57","12/8/2024 Katharyn Laudone CONN"
+"#18 Women 65-69 50 Free","33.39","12/16/2018 Melinda Wolff - 1776"
+"#11 Women 65-69 100 Free","1:14.23","12/15/2019 Nancy Steadman Martin - GSM"
+"#6 Women 65-69 200 Free","2:35.61","12/19/2021 Nancy Steadman Martin - GSM"
+"#2 Women 65-69 400 Free","5:21.66","12/15/2019 Nancy Steadman Martin - GSM"
+"#1 Women 65-69 1500 Free","20:37.33","12/18/2021 Nancy Steadman Martin - GSM"
+"#12 Women 65-69 25 Back","27.50","12/14/2025 Meredith Lyndon - RBAY"
+"#5 Women 65-69 50 Back","42.43","12/16/2018 Melinda Wolff - 1776"
+"#20 Women 65-69 100 Back","1:27.37","12/11/2022 Nancy Steadman Martin GSM"
+"#16 Women 65-69 200 Back","3:03.03","12/19/2021 Nancy Steadman Martin - GSM"
+"#7 Women 65-69 25 Breast","21.12","12/17/2023 Meredith Lyndon RBAY"
+"#21 Women 65-69 50 Breast","42.37","12/16/2018 Melinda Wolff - 1776"
+"#17 Women 65-69 100 Breast","1:42.80","12/11/2022 Nancy Steadman Martin - GSM"
+"#10 Women 65-69 200 Breast","3:34.89","12/19/2021 Nancy Steaman Martin GSM"
+"#15 Women 65-69 25 Fly","23.16","12/8/2024 Katharyn Laudone - CONN"
+"#9 Women 65-69 50 Fly","38.04","12/16/2018 Melinda Wolff - 1776"
+"#4 Women 65-69 100 Fly","1:31.40","12/11/2022 Nancy Steadman Martin - GSM"
+"#19 Women 65-69 200 Fly","3:05.61","12/19/2021 Nancy Steadman Martin GSM"
+"#13 Women 65-69 100 IM","1:22.02","12/16/2018 Ceclia McCloskey SFTL"
+"#8 Women 65-69 200 IM","3:05.22","12/16/2018 Cecilia McCloskey SFTL"
+"#3 Women 65-69 400 IM","6:20.07","12/19/2021 Nancy Steadman Martin - GSM"
+"#22 Women 70-74 25 Free","17.43","12/11/2022 Heidi Remak-Ziff JACM"
+"#18 Women 70-74 50 Free","38.35","12/11/2022 Heidi Remak-Ziff JACM"
+"#11 Women 70-74 100 Free","1:25.66","12/11/2022 Heidi Remak-Ziff JACM"
+"#6 Women 70-74 200 Free","2:38.76","12/14/2025 Nancy Steadman Martin - GSM"
+"#2 Women 70-74 400 Free","7:08.08","12/16/2018 Janet Jastremski 1776"
+"#1 Women 70-74 1500 Free","20:55.09","12/7/2024 Nancy Steadman Martin - GSM"
+"#12 Women 70-74 25 Back","30.09","12/19/2021 Marie Vellucci - BERK"
+"#5 Women 70-74 50 Back","51.78","12/11/2022 Sue Freeman-Patterson RBAY"
+"#20 Women 70-74 100 Back","1:55.73","12/11/2022 Sue Freeman-Patterson - RBAY"
+"#16 Women 70-74 200 Back","3:03.91","12/8/2024 Nancy Steadman Martin - GSM"
+"#7 Women 70-74 25 Breast","28.85","12/14/2025 Amy Xiang - SCM"
+"#21 Women 70-74 50 Breast","1:03.54","12/14/2025 Amy Xiang - SCYM"
+"#17 Women 70-74 100 Breast","2:05.61","12/14/2025 Patricia Hood 1776"
+"#10 Women 70-74 200 Breast","3:33.92","12/8/2024 Nancy Steaman Martin - GSM"
+"#9 Women 70-74 50 Fly","1:22.18","12/17/2017 Jane Katz - AGUA"
+"#4 Women 70-74 100 Fly","211.55 :","12/10/2016 Barbara Charles REDT"
+"#19 Women 70-74 200 Fly","315.45 :","12/8/2024 Nancy Steadman Martin GSM"
+"#13 Women 70-74 100 IM","1:45.75","12/11/2022 Heidi Remak-Ziff - JACM"
+"#8 Women 70-74 200 IM","4:21.19","12/14/2025 Patricia Hood - 1776"
+"#3 Women 70-74 400 IM","6:31.55","12/8/2024 Nancy Steadman Martin - GSM"
+"#18 Women 75-79 50 Free","43.78","12/11/2022 Margaret S Lecarreaux RBAY"
+"#11 Women 75-79 100 Free","1:48.35","12/16/2018 Jane Katz - AGUA"
+"#6 Women 75-79 200 Free","3:40.32","12/16/2018 Jane Katz - AGUA"
+"#2 Women 75-79 400 Free","7:29.00","12/16/2018 Jane Katz - AGUA"
+"#1 Women 75-79 1500 Free","29:59.32","12/14/2019 Jane Katz - AGUA"
+"#5 Women 75-79 50 Back","48.69","12/11/2022 Margaret S Lecarreaux RBAY"
+"#20 Women 75-79 100 Back","1:52.76","12/16/2018 Jane Katz - AGUA"
+"#16 Women 75-79 200 Back","3:59.43","12/16/2018 Jane Katz - AGUA"
+"#21 Women 75-79 50 Breast","1:00.37","12/11/2022 Margaret S Lecarreaux - RBAY"
+"#10 Women 75-79 200 Breast","5:16.36","12/15/2019 Jane Katz - AGUA"
+"#9 Women 75-79 50 Fly","57.21","12/11/2022 Margaret S Lecarreaux - RBAY"
+"#13 Women 75-79 100 IM","1:50.14","12/11/2022 Margaret S Lecarreaux RBAY"
+"#3 Women 75-79 400 IM","942.00 :","12/15/2019 Jane Katz - AGUA"
+"#18 Women 80-84 50 Free","1:02.28","12/17/2017 Janet H Moeller SCYM"
+"#6 Women 80-84 200 Free","4:56.20","12/16/2018 Janet H Moeller SCYM"
+"#1 Women 80-84 1500 Free","38:51.40","12/10/2016 Janet Moeller AGUA"
+"#5 Women 80-84 50 Back","1:10.50","12/17/2017 Janet Moeller - SCYM"
+"#21 Women 80-84 50 Breast","1:19.56","12/17/2017 Janet H Moeller - SCYM"
+"#10 Women 80-84 200 Breast","6:19.31","12/16/2018 Janet H Moeller SCYM"
+"#9 Women 80-84 50 Fly","1:35.94","12/17/2017 Janet H Moeller SCYM"
+"#13 Women 80-84 100 IM","240.19 :","12/16/2018 Janet H Moeller - SCYM"
+"#8 Women 80-84 200 IM","5:47.73","12/16/2018 Janet H Moeller SCYM"
+"#22 Women 85-89 25 Free","1:02.13","12/17/2017 Joy Tsuzuki - SCYM"
+"#18 Women 85-89 50 Free","1:02.28","12/15/2019 Janet H Moeller SCYM"
+"#12 Women 85-89 25 Back","45.62","12/17/2017 Joy Tsuzuki - SCYM"
+"#5 Women 85-89 50 Back","1:07.37","12/15/2019 Janet H Moeller SCYM"
+"#21 Women 85-89 50 Breast","1:19.52","12/15/2019 Janet H Moeller SCYM"
+"#9 Women 85-89 50 Fly","1:27.37","12/15/2019 Janet H Moeller SCYM"
+"#13 Women 85-89 100 IM","238.88 :","12/15/2019 Janet H Moeller SCYM"
+"#12 Women 90-94 25 Back","1:01.09","12/19/2021 Joy Tsuzuki - SCYM"
+"#5 Women 90-94 50 Back","3:26.77","12/19/2021 Joy Tsuzuki - SCYM"
+"#12 Women 95-99 25 Back","1:17.84","12/14/2025 Joy Tsuzuki - SCYM"
+"#5 Women 95-99 50 Back","2:47.44","12/14/2025 Joy Tsuzuki - SCYM"
+"#22 Men 18-24 25 Free","13.27","12/17/2017 Oriol Hernandez - SCYM"
+"#18 Men 18-24 50 Free","23.93","12/11/2022 Kurt von Autenried CHEL"
+"#11 Men 18-24 100 Free","52.83","12/11/2022 Joseph Scerbo - IUSC"
+"#6 Men 18-24 200 Free","2:09.18","12/19/2021 Mathias N Altman-Kurosaki AGUA"
+"#2 Men 18-24 400 Free","4:33.39","12/19/2021 Mathias N Altman-Kurosaki - AGUA"
+"#1 Men 18-24 1500 Free","19:06.63","12/7/2024 John Rawlins - 1776"
+"#12 Men 18-24 25 Back","13.68","12/17/2023 Matthew Marsh - SVY"
+"#5 Men 18-24 50 Back","28.41","12/19/2021 Nicholas Bloom - UC08"
+"#20 Men 18-24 100 Back","1:02.16","12/11/2022 Joseph Scerbo - IUSC"
+"#16 Men 18-24 200 Back","243.67 :","12/19/2021 Eddie Filipovic - RMT"
+"#7 Men 18-24 25 Breast","14.38","12/19/2021 Joshua Tosoni - GSM"
+"#21 Men 18-24 50 Breast","31.44","12/19/2021 Joshua Tosoni - GSM"
+"#17 Men 18-24 100 Breast","1:07.95","12/11/2022 Joseph Scerbo - IUSC"
+"#10 Men 18-24 200 Breast","2:53.25","12/19/2021 Eddie Filipovic RMT"
+"#15 Men 18-24 25 Fly","14.22","12/19/2021 Chris Fleming - 1776"
+"#9 Men 18-24 50 Fly","26.59","12/11/2022 Kurt von Autenried CHEL"
+"#4 Men 18-24 100 Fly","58.07","12/11/2022 Joseph Scerbo - IUSC"
+"#19 Men 18-24 200 Fly","2:25.64","12/19/2021 Mathias N Altman-Kurosaki - AGUA"
+"#13 Men 18-24 100 IM","1:01.27","12/11/2022 Kurt von Autenried - CHEL"
+"#8 Men 18-24 200 IM","212.53 :","12/11/2022 Joseph Scerbo - IUSC"
+"#3 Men 18-24 400 IM",":454.17","12/19/2021 Joshua Tosoni GSM"
+"#22 Men 25-29 25 Free","12.16","12/8/2024 Stephen Walsh - UC07"
+"#18 Men 25-29 50 Free","24.65","12/17/2023 Karl Sarier - SCYM"
+"#11 Men 25-29 100 Free","57.16","12/19/2021 Thomas Cornes - SVY"
+"#6 Men 25-29 200 Free","2:04.70","12/11/2022 David Chung - CHEL"
+"#2 Men 25-29 400 Free","4:29.30","12/8/2024 Michael Culbert - UC07"
+"#1 Men 25-29 1500 Free","1810.30 :","12/7/2024 Michael Culbert UC07"
+"#12 Men 25-29 25 Back","16.34","12/16/2018 Jack Port WASC"
+"#5 Men 25-29 50 Back","29.14","12/17/2023 Karl Sarier - SCYM"
+"#20 Men 25-29 100 Back","1:08.97","12/15/2019 Timothy Guminski UC08"
+"#16 Men 25-29 200 Back","2:31.72","12/8/2024 Robert Rieger - UC07"
+"#7 Men 25-29 25 Breast","17.40","12/11/2022 Justin Cole - GWMS"
+"#21 Men 25-29 50 Breast","29.01","12/17/2023 Stephen Husch - JACM"
+"#17 Men 25-29 100 Breast","1:03.51","12/17/2023 Stephen Husch - JACM"
+"#10 Men 25-29 200 Breast","2:37.74","12/15/2019 Timothy Guminski UC08"
+"#15 Men 25-29 25 Fly","12.38","12/8/2024 Nolan Kuscan - VHL"
+"#9 Men 25-29 50 Fly","27.55","12/17/2023 Karl Sarier - SCYM"
+"#4 Men 25-29 100 Fly","58.97","12/11/2022 Stephen Husch - JACM"
+"#19 Men 25-29 200 Fly","2:33.35","12/10/2016 James Milone - LHY"
+"#13 Men 25-29 100 IM","1:00.20","12/17/2023 Karl Sarier - SCYM"
+"#8 Men 25-29 200 IM","2:25.52","12/19/2021 Andrew Seaton - 1776"
+"#3 Men 25-29 400 IM","518.35 :","12/11/2022 Daniel V Galarza RMT"
+"#22 Men 30-34 25 Free","10.63","12/17/2023 Cameron Owen - FSAM"
+"#18 Men 30-34 50 Free","25.48","12/11/2022 Luca Manfredi - CHEL"
+"#11 Men 30-34 100 Free","55.85","12/11/2022 Lovro Bilonic - UC07"
+"#6 Men 30-34 200 Free","1:59.73","12/8/2024 Juan Sequera - PAA"
+"#1 Men 30-34 1500 Free","21:30.98","12/17/2023 Ryan Callanan 1776"
+"#12 Men 30-34 25 Back","13.20","12/17/2023 Cameron Owen FSAM"
+"#5 Men 30-34 50 Back","29.68","12/11/2022 Luca Manfredi CHEL"
+"#20 Men 30-34 100 Back","118.94 :","12/15/2019 Michael Kerr BERK"
+"#16 Men 30-34 200 Back","2:42.68","12/17/2023 Ryan Callanan 1776"
+"#7 Men 30-34 25 Breast","13.73","12/17/2023 Cameron Owen FSAM"
+"#21 Men 30-34 50 Breast","30.87","12/11/2022 Lovro Bilonic - UC07"
+"#17 Men 30-34 100 Breast","1:07.72","12/11/2022 Lovro Bilonic - UC07"
+"#10 Men 30-34 200 Breast","2:22.56","12/8/2024 Juan Sequera - PAA"
+"#15 Men 30-34 25 Fly","11.15","12/17/2023 Cameron Owen - FSAM"
+"#9 Men 30-34 50 Fly","27.63","12/11/2022 Luca Manfredi - CHEL"
+"#4 Men 30-34 100 Fly","54.66","12/17/2023 Cameron Owen - FSAM"
+"#19 Men 30-34 200 Fly","2:32.66","12/15/2019 Nick Pierson BERK"
+"#13 Men 30-34 100 IM","1:04.44","12/11/2022 Luca Manfredi CHEL"
+"#8 Men 30-34 200 IM","240.13 :","12/15/2019 Michael Kerr BERK"
+"#3 Men 30-34 400 IM","6:01.03","12/17/2023 Ryan Callanan 1776"
+"#22 Men 35-39 25 Free","10.66","12/8/2024 Cameron Owen FSAM"
+"#18 Men 35-39 50 Free","24.28","12/14/2025 Bradley Gorter - FAWSM"
+"#11 Men 35-39 100 Free","50.21","12/8/2024 Cameron Owen - FSAM"
+"#6 Men 35-39 200 Free","2:11.18","12/11/2022 Jorge Angulo - SCYM"
+"#2 Men 35-39 400 Free","4:39.73","12/11/2022 Jorge Angulo - SCYM"
+"#1 Men 35-39 1500 Free","19:23.87","12/10/2022 Jorge R Angulo - SCYM"
+"#12 Men 35-39 25 Back","18.44","12/8/2024 Brendan Carter - UC06"
+"#5 Men 35-39 50 Back","28.75","12/14/2025 Bradley Gorter FASWM"
+"#20 Men 35-39 100 Back","1:18.47","12/17/2023 David O'Dougherty SCYM"
+"#16 Men 35-39 200 Back","2:58.72","12/19/2021 Michael Burghoffer RMT"
+"#7 Men 35-39 25 Breast","17.57","12/8/2024 Brendan Carter UC06"
+"#21 Men 35-39 50 Breast","33.12","12/14/2025 Bradley Gorter FAWSM"
+"#17 Men 35-39 100 Breast","1:23.47","12/8/2024 Nick Pierson - JACM"
+"#10 Men 35-39 200 Breast","2:54.97","12/16/2018 Michael Sabala CHEL"
+"#15 Men 35-39 25 Fly","10.93","12/8/2024 Cameron Owen - FSAM"
+"#9 Men 35-39 50 Fly","27.04","12/14/2025 Bradley Gorter - FASWM"
+"#4 Men 35-39 100 Fly","55.06","12/8/2024 Cameron Owen - FSAM"
+"#19 Men 35-39 200 Fly","2:06.13","12/8/2024 Cameron Owen FSAM"
+"#13 Men 35-39 100 IM","1:02.26","12/14/2025 Bradley Gorter - FASWM"
+"#8 Men 35-39 200 IM","248.50 :","12/8/2024 Nick Pierson - JACM"
+"#22 Men 40-44 25 Free","11.47","12/16/2018 Eric Stull - SVY"
+"#18 Men 40-44 50 Free","25.67","12/16/2018 Eric Stull - SVY"
+"#11 Men 40-44 100 Free","57.10","12/16/2018 Eric Stull SVY"
+"#6 Men 40-44 200 Free","2:08.01","12/16/2018 Eric Stull - SVY"
+"#2 Men 40-44 400 Free",":436.76","12/16/2018 Eric Stull - SVY"
+"#1 Men 40-44 1500 Free","18:53.03","12/10/2022 Michael Sabala CHEL"
+"#12 Men 40-44 25 Back","16.18","12/17/2017 Michael Bohan - UC07"
+"#5 Men 40-44 50 Back","31.57","12/11/2022 Michael Sabala - CHEL"
+"#20 Men 40-44 100 Back","1:10.68","12/14/2025 Geoffrey Overdorff LASH"
+"#16 Men 40-44 200 Back","2:41.93","12/8/2024 Sean Thomas MARY"
+"#7 Men 40-44 25 Breast","14.50","12/11/2022 Bradford Houchins SVY"
+"#21 Men 40-44 50 Breast","32.73","12/11/2022 Bradford Houchins SVY"
+"#17 Men 40-44 100 Breast","1:13.25","12/11/2022 Bradford Houchins SVY"
+"#10 Men 40-44 200 Breast","2:30.66","12/19/2021 Carlos J Asarta Pedraza - UC10"
+"#15 Men 40-44 25 Fly","12.53","12/8/2024 Paulius Mikalaini SCYM"
+"#9 Men 40-44 50 Fly","27.99","12/14/2025 Paulius Mikalainis - SCYM"
+"#4 Men 40-44 100 Fly","1:08.80","12/14/2025 Geoffrey Overdorff LASH"
+"#19 Men 40-44 200 Fly","2:39.87","12/8/2024 Sean Thomas - MARY"
+"#13 Men 40-44 100 IM","1:04.69","12/19/2021 Carlos J Asarta Pedraza UC10"
+"#8 Men 40-44 200 IM","2:34.58","12/14/2025 Geoffrey Overdorff LASH"
+"#3 Men 40-44 400 IM","4:56.49","12/19/2021 Carlos J Asarta Pedraza - UC10"
+"#22 Men 45-49 25 Free","13.22","12/14/2025 Luis Gallardo - UC06"
+"#18 Men 45-49 50 Free","26.14","12/15/2019 Eric Stull - SVY"
+"#11 Men 45-49 100 Free","57.84","12/15/2019 Eric Stull - SVY"
+"#6 Men 45-49 200 Free","213.95 :","12/17/2023 Bradley Kirschner SVY"
+"#2 Men 45-49 400 Free","4:35.29","12/14/2025 Thomas Dion - RMST"
+"#1 Men 45-49 1500 Free","18:24.79","12/13/2025 Thomas Dion RMST"
+"#12 Men 45-49 25 Back","36.48","12/8/2024 Michael Giannetto - HVD"
+"#5 Men 45-49 50 Back","31.03","12/19/2021 Gregory Riedlinger - UC07"
+"#20 Men 45-49 100 Back","1:13.54","12/17/2023 Bradley Kirschner SVY"
+"#16 Men 45-49 200 Back","2:29.31","12/8/2024 Carlos Asarta Pedraza - UC10"
+"#7 Men 45-49 25 Breast","15.06","12/16/2018 Gary Sangmeister - SVY"
+"#21 Men 45-49 50 Breast","33.38","12/14/2025 Igor Voloshin - UC07"
+"#17 Men 45-49 100 Breast","1:12.67","12/17/2023 Steven Gold - BSS"
+"#10 Men 45-49 200 Breast","2:36.59","12/8/2024 Carlos J Asarta Pedraza UC10"
+"#15 Men 45-49 25 Fly","12.61","12/16/2018 Gary Sangmeister - SVY"
+"#9 Men 45-49 50 Fly","28.52","12/17/2017 Gary Sangmeister - SVY"
+"#4 Men 45-49 100 Fly","1:04.66","12/17/2023 Steven Gold BSS"
+"#19 Men 45-49 200 Fly","2:34.00","12/8/2024 Carlos Asarta Pedraza - UC10"
+"#13 Men 45-49 100 IM","1:07.39","12/14/2025 Igor Voloshin - UC07"
+"#8 Men 45-49 200 IM","2:31.68","12/17/2023 Steven Gold - BSS"
+"#3 Men 45-49 400 IM","5:08.00","12/8/2024 Carlos J Asarta Pedraza UC10"
+"#22 Men 50-54 25 Free","11.65","12/11/2022 Hernan Vespa - UC07"
+"#18 Men 50-54 50 Free","25.54","12/19/2021 Jeremy Gross - SVY"
+"#11 Men 50-54 100 Free","58.95","12/17/2023 Hernan Vespa - UC07"
+"#6 Men 50-54 200 Free","212.59 :","12/10/2016 Scott Yeomans GSM"
+"#2 Men 50-54 400 Free","4:41.59","12/10/2016 Scott Yeomans GSM"
+"#1 Men 50-54 1500 Free","19:12.32","12/18/2021 Jeffrey Jotz - BERK"
+"#12 Men 50-54 25 Back","53.52","12/8/2024 Thomas Flynn RMT"
+"#5 Men 50-54 50 Back","30.15","12/19/2021 Greg Rees - SCY"
+"#20 Men 50-54 100 Back","1:08.67","12/16/2018 Jose Faria - GSM"
+"#16 Men 50-54 200 Back","233.40 :","12/16/2018 Sebastian Moll - REDT"
+"#7 Men 50-54 25 Breast","16.93","12/16/2018 Mark Haftkowycz - UC07"
+"#21 Men 50-54 50 Breast","34.00","12/11/2022 Gary Sangmeister - SVY"
+"#17 Men 50-54 100 Breast","1:15.48","12/16/2018 Carlo Waldfried MESC"
+"#10 Men 50-54 200 Breast","2:44.99","12/16/2018 Carlo Waldfried - MESC"
+"#15 Men 50-54 25 Fly","13.37","12/19/2021 Hernan Vespa - UC07"
+"#9 Men 50-54 50 Fly","27.97","12/19/2021 Jeremy Gross - SVY"
+"#4 Men 50-54 100 Fly","1:07.15","12/14/2025 Luca Beverini - SCYM"
+"#19 Men 50-54 200 Fly","2:56.79","12/15/2019 Jens Volker - GSM"
+"#13 Men 50-54 100 IM","1:02.57","12/15/2019 Jerome Frentsos - DCAC"
+"#8 Men 50-54 200 IM","217.64 :","12/15/2019 Jerome A Frentsos DCAC"
+"#3 Men 50-54 400 IM","5:21.86","12/10/2016 Jose Faria - GSM"
+"#22 Men 55-59 25 Free","12.66","12/8/2024 Neil Levi - REDT"
+"#18 Men 55-59 50 Free","26.04","12/17/2023 Steve Hiltabiddle - 1776"
+"#11 Men 55-59 100 Free","56.96","12/17/2023 Steve Hiltabiddle 1776"
+"#6 Men 55-59 200 Free","2:13.65","12/11/2022 Rob Barringer - CMS"
+"#2 Men 55-59 400 Free","4:47.17","12/11/2022 Rob Barringer CMS"
+"#1 Men 55-59 1500 Free","19:33.22","12/10/2022 Rob Barringer CMS"
+"#12 Men 55-59 25 Back","15.18","12/14/2025 Jose Faria - SCYM"
+"#5 Men 55-59 50 Back","30.41","12/11/2022 Jerome A Frentsos DCAC"
+"#20 Men 55-59 100 Back","1:14.57","12/17/2017 Ron Marks - SFTL"
+"#16 Men 55-59 200 Back","2:28.01","12/19/2021 Jerome A Frentsos DCAC"
+"#7 Men 55-59 25 Breast","16.60","12/14/2025 Jose Faria - SCYM"
+"#21 Men 55-59 50 Breast","32.73","12/11/2022 Jerome A Frentsos DCAC"
+"#17 Men 55-59 100 Breast","1:16.07","12/10/2016 Benn Doyle - GSM"
+"#10 Men 55-59 200 Breast","2:49.69","12/17/2017 Benn Doyle - BERK"
+"#15 Men 55-59 25 Fly","13.65","12/14/2025 Jose Faria - SCYM"
+"#9 Men 55-59 50 Fly","27.64","12/17/2023 Steve Hiltabiddle - 1776"
+"#4 Men 55-59 100 Fly","1:02.40","12/17/2023 Steve Hiltabiddle 1776"
+"#13 Men 55-59 100 IM","1:02.27","12/19/2021 Jerome Frentsos DCAC"
+"#8 Men 55-59 200 IM","215.57 :","12/19/2021 Jerome A Frentsos DCAC"
+"#3 Men 55-59 400 IM","5:39.01","12/14/2025 Jose Faria - SCYM"
+"#22 Men 60-64 25 Free","13.06","12/19/2021 Ed M Tsuzuki - SCYM"
+"#18 Men 60-64 50 Free","26.66","12/16/2018 Gregory Oxley - LASH"
+"#11 Men 60-64 100 Free","1:04.89","12/16/2018 Thomas Meade - LASH"
+"#6 Men 60-64 200 Free","2:28.67","12/19/2016 Ken Niemi - GSM"
+"#2 Men 60-64 400 Free","513.25 :","12/10/2016 Ken Niemi - GSM"
+"#1 Men 60-64 1500 Free","19:43.63","12/16/2018 Christopher Gibson PAA"
+"#12 Men 60-64 25 Back","19.82","12/16/2018 Mark Weinstein - RBAY"
+"#5 Men 60-64 50 Back","36.14","12/15/2019 Ken Niemi - SCYM"
+"#20 Men 60-64 100 Back","118.33 :","12/16/2018 Ken Niemi - GSM"
+"#16 Men 60-64 200 Back","249.10 :","12/14/2025 Sebastian Moll REDT"
+"#7 Men 60-64 25 Breast","21.06","12/14/2025 Jerry Borrelli - UC07"
+"#21 Men 60-64 50 Breast","32.75","12/16/2018 Gregory Oxley - LASH"
+"#17 Men 60-64 100 Breast","1:16.57","12/16/2018 Benn Doyle - BERK"
+"#10 Men 60-64 200 Breast","345.56 :","12/17/2017 John Chambers - CHEL"
+"#15 Men 60-64 25 Fly","15.28","12/19/2021 Bob Sendel - UC06"
+"#9 Men 60-64 50 Fly","32.04","12/16/2018 Thomas Meade - LASH"
+"#4 Men 60-64 100 Fly","1:17.71","12/16/2018 Ken Niemi - GSM"
+"#19 Men 60-64 200 Fly","2:54.85","12/17/2017 John Chambers CHEL"
+"#13 Men 60-64 100 IM","1:06.42","12/16/2018 Gregory Oxley LASH"
+"#8 Men 60-64 200 IM","2:54.75","12/16/2018 Ken Niemi - GSM"
+"#3 Men 60-64 400 IM","614.02 :","12/17/2017 John Chambers CHEL"
+"#22 Men 65-69 25 Free","13.63","12/17/2023 Ed M Tsuzuki - SCYM"
+"#18 Men 65-69 50 Free","27.44","12/17/2023 Gregory Oxley - LASH"
+"#11 Men 65-69 100 Free","1:11.93","12/17/2017 Frank McElroy - GSM"
+"#6 Men 65-69 200 Free","2:34.87","12/17/2017 James Ryan - GSM"
+"#2 Men 65-69 400 Free","5:23.38","12/17/2017 James Ryan - GSM"
+"#1 Men 65-69 1500 Free","20:29.04","12/18/2021 Christopher Gibson PAA"
+"#12 Men 65-69 25 Back","17.77","12/11/2022 Ken Niemi - SCYM"
+"#5 Men 65-69 50 Back","36.08","12/16/2018 Michael Fey - UC07"
+"#20 Men 65-69 100 Back","1:21.50","12/11/2022 Ken Niemi - SCYM"
+"#16 Men 65-69 200 Back","2:54.05","12/11/2022 Ken Niemi - SCYM"
+"#7 Men 65-69 25 Breast","15.90","12/17/2023 Greg Oxley - LASH"
+"#21 Men 65-69 50 Breast","34.33","12/17/2023 Gregory Oxley - LASH"
+"#17 Men 65-69 100 Breast","1:29.53","12/10/2016 Richard Bohan - BERK"
+"#10 Men 65-69 200 Breast","3:29.94","12/17/2023 Ken Niemi - SCYM"
+"#15 Men 65-69 25 Fly","15.39","12/8/2024 Vincent Laudone CONN"
+"#9 Men 65-69 50 Fly","34.31","12/16/2018 Michael Fey - UC07"
+"#4 Men 65-69 100 Fly","1:20.35","12/16/2018 Robert Jones - 1776"
+"#19 Men 65-69 200 Fly","317.17 :","12/17/2023 Ken Niemi - SCYM"
+"#13 Men 65-69 100 IM","1:08.95","12/17/2023 Gregory Oxley - LASH"
+"#8 Men 65-69 200 IM","2:59.66","12/19/2021 Ken Niemi - SCYM"
+"#3 Men 65-69 400 IM","6:22.62","12/17/2023 Ken Niemi - SCYM"
+"#22 Men 70-74 25 Free","12.97","12/14/2025 Vincent Laudone CONN"
+"#18 Men 70-74 50 Free","28.84","12/14/2025 Vincent Laudone CONN"
+"#11 Men 70-74 100 Free","1:10.43","12/16/2018 Frank McElroy - GSM"
+"#6 Men 70-74 200 Free","2:35.68","12/15/2019 Frank McElroy - GSM"
+"#2 Men 70-74 400 Free","5:20.11","12/16/2018 Frank McElroy - GSM"
+"#1 Men 70-74 1500 Free","21:39.85","12/16/2018 Frank McElroy GSM"
+"#12 Men 70-74 25 Back","18.35","12/15/2019 Jack Zakim - GSM"
+"#5 Men 70-74 50 Back","36.65","12/19/2021 Michael Fey - UC07"
+"#20 Men 70-74 100 Back","1:29.70","12/10/2016 Jack Zakim - GSM"
+"#16 Men 70-74 200 Back","3:00.25","12/14/2025 Ken Niemi - SCYM"
+"#7 Men 70-74 25 Breast","18.69","12/19/2021 Stephen Dougherty 1776"
+"#21 Men 70-74 50 Breast","40.57","12/17/2017 Jim Dragon - GSM"
+"#17 Men 70-74 100 Breast","1:35.31","12/19/2021 Stephen Dougherty 1776"
+"#10 Men 70-74 200 Breast","3:29.81","12/19/2021 Stephen Dougherty 1776"
+"#15 Men 70-74 25 Fly","15.63","12/16/2018 Joseph S Amundsen 1776"
+"#9 Men 70-74 50 Fly","32.72","12/17/2017 Jim Dragon - GSM"
+"#4 Men 70-74 100 Fly","1:25.89","12/19/2021 Robert Jones 1776"
+"#19 Men 70-74 200 Fly","3:26.53","12/14/2025 Ken Niemi - SCYM"
+"#13 Men 70-74 100 IM","1:21.57","12/19/2021 Michael Fey - UC07"
+"#8 Men 70-74 200 IM","3:23.65","12/19/2021 Robert Jones - 1776"
+"#3 Men 70-74 400 IM","6:42.78","12/15/2019 Frank McElroy - GSM"
+"#22 Men 75-79 25 Free","16.85","12/11/2022 Lawrence Seidman GSM"
+"#18 Men 75-79 50 Free","32.27","12/19/2021 Jim Dragon - GSM"
+"#11 Men 75-79 100 Free","1:19.10","12/11/2022 Joseph Amundsen 1776"
+"#6 Men 75-79 200 Free","3:03.67","12/8/2024 Jack Zakim - GSM"
+"#2 Men 75-79 400 Free","6:37.80","12/17/2017 Bob Hopkins - GSM"
+"#1 Men 75-79 1500 Free","24:38.68","12/10/2022 Rich Bernstein AGUA"
+"#12 Men 75-79 25 Back","19.64","12/8/2024 Jack Zakim - GSM"
+"#5 Men 75-79 50 Back","38.51","12/17/2023 Richard Alexander - GSM"
+"#20 Men 75-79 100 Back","1:32.58","12/17/2023 Richard Alexander - GSM"
+"#16 Men 75-79 200 Back","3:47.62","12/11/2022 Rich Bernstein - AGUA"
+"#7 Men 75-79 25 Breast","30.35","12/19/2021 Robert Gamer - UC07"
+"#21 Men 75-79 50 Breast","42.71","12/17/2023 Jim Dragon - GSM"
+"#17 Men 75-79 100 Breast","2:32.31","12/19/2021 Robert Gamer - UC07"
+"#10 Men 75-79 200 Breast","3:53.78","12/19/2021 Rich Bernstein AGUA"
+"#15 Men 75-79 25 Fly","19.50","12/11/2022 Lawrence Seidman GSM"
+"#9 Men 75-79 50 Fly","34.77","12/17/2023 Jim Dragon - GSM"
+"#4 Men 75-79 100 Fly","2:11.69","12/11/2022 Lawrence Seidman GSM"
+"#19 Men 75-79 200 Fly","4:06.02","12/17/2023 Marc Rothman - UC06"
+"#13 Men 75-79 100 IM","1:41.61","12/19/2021 Joseph Amundsen 1776"
+"#8 Men 75-79 200 IM","3:43.69","12/17/2017 Bob Hopkins - GSM"
+"#3 Men 75-79 400 IM","7:59.97","12/19/2021 Rich Bernstein - AGUA"
+"#22 Men 80-84 25 Free","29.75","12/8/2024 Robert Gamer - UC07"
+"#18 Men 80-84 50 Free","32.88","12/8/2024 Jim Dragon - GSM"
+"#11 Men 80-84 100 Free","1:47.28","12/15/2019 E Dieter Wunderlich SCYM"
+"#6 Men 80-84 200 Free","4:48.31","12/10/2016 David D Gladfelter 1776"
+"#2 Men 80-84 400 Free","10:45.67","12/17/2017 David Gladfelter 1776"
+"#1 Men 80-84 1500 Free","34:11.07","12/17/2023 Bob Hopkins - GSM"
+"#5 Men 80-84 50 Back","51.70","12/17/2023 Bob Hopkins - GSM"
+"#20 Men 80-84 100 Back","1:52.39","12/17/2023 Bob Hopkings - GSM"
+"#16 Men 80-84 200 Back","410.71 :","12/17/2023 Bob Hopkins - GSM"
+"#21 Men 80-84 50 Breast","43.55","12/8/2024 Jim Dragon - GSM"
+"#17 Men 80-84 100 Breast","2:29.80","12/15/2019 E Dieter Wunderlich- BERK"
+"#10 Men 80-84 200 Breast","5:09.06","12/17/2023 Bob Hopkins - GSM"
+"#15 Men 80-84 25 Fly","30.03","12/8/2024 Robert Gamer - UC07"
+"#9 Men 80-84 50 Fly","34.27","12/8/2024 Jim Dragon - GSM"
+"#4 Men 80-84 100 Fly","2:58.69","12/8/2024 Robert Gamer - UC07"
+"#19 Men 80-84 200 Fly","7:07.01","12/8/2024 Robert Gamer - UC07"
+"#13 Men 80-84 100 IM","2:04.81","12/17/2023 Bob Hopkins - GSM"
+"#22 Men 85-89 25 Free","28.41","12/17/2017 Lindsay Conner - UC07"
+"#18 Men 85-89 50 Free","42.45","12/15/2019 Norman G Bartner GSM"
+"#11 Men 85-89 100 Free","1:55.18","12/11/2022 E Dieter Wunderlich SCYM"
+"#6 Men 85-89 200 Free","517.72 :","12/19/2021 David D Gladfelter 1776"
+"#2 Men 85-89 400 Free","9:04.44","12/17/2017 Paul Kiell - SCYM"
+"#12 Men 85-89 25 Back","23.37","12/15/2019 Norman G Bartner - GSM"
+"#5 Men 85-89 50 Back","53.50","12/15/2019 Norman G Bartner GSM"
+"#20 Men 85-89 100 Back","2:09.66","12/19/2021 Hans R Schade - UC08"
+"#16 Men 85-89 200 Back",":450.34","12/19/2021 Hans R Schade UC08"
+"#7 Men 85-89 25 Breast","26.32","12/15/2019 Norman G Bartner UC07"
+"#21 Men 85-89 50 Breast","1:31.06","12/17/2023 David D Gladfelter 1776"
+"#17 Men 85-89 100 Breast","2:53.96","12/11/2022 E Dieter Wunderlich- SCYM"
+"#10 Men 85-89 200 Breast","7:35.17","12/11/2022 David D Gladfelter 1776"
+"#9 Men 85-89 50 Fly","2:06.47","12/17/2023 David Gladfelter 1776"
+"#4 Men 85-89 100 Fly","4:54.01","12/11/2022 David D Gladfelter 1776"
+"#13 Men 85-89 100 IM","238.18 :","12/19/2021 David D Gladfelter 1776"
+"#8 Men 85-89 200 IM","6:32.06","12/11/2022 David D Gladfelter 1776"
+"#3 Men 85-89 400 IM","14:30.81","12/11/2022 David D Gladfelter 1776"
+"#14 Women 120-159 200 Free Relay","216.35 :","12/10/2016 Somerset County YMCA"
+"#23 Women 120-159 200 Medley Relay","2:23.27","12/8/2024 Landshark Aquatic Masters"
+"#14 Women 160-199 200 Free Relay","2:11.55","12/14/2025 Somerset County YMCA"
+"#23 Women 160-199 200 Medley Relay","2:29.07","12/11/2022 Somerset County YMCA"
+"#14 Women 200-239 200 Free Relay","2:59.50","12/16/2018 Somerset County YMCA"
+"#14 Men 72-99 200 Free Relay","1:56.45","12/17/2017 Somerset County YMCA"
+"#23 Men 100-119 200 Medley Relay","1:54.63","12/11/2022 Chelsea Piers"
+"#14 Men 120-159 200 Free Relay","2:04.85","12/11/2022 Raritan Bay at South Amboy"
+"#14 Men 160-199 200 Free Relay","2:22.85","12/11/2022 Green Wave Masters"
+"#23 Men 160-199 200 Medley Relay","245.79 :","12/15/2019 Green Wave Masters"
+"#14 Men 200-239 200 Free Relay","1:58.87","12/17/2017 Somerset County YMCA"
+"#23 Men 200-239 200 Medley Relay","214.39 :","12/17/2023 Somerset County YMCA"
+"#14 Men 240-279 200 Free Relay","2:26.99","12/16/2018 Somerset County YMCA"
+"#23 Men 240-279 200 Medley Relay","2:25.06","12/11/2022 Somerset County YMCA"
+"#14 Men 280-319 200 Free Relay","217.30 :","12/10/2016 Garden State Masters"
+"#23 Men 280-319 200 Medley Relay","2:46.56","12/10/2016 Garden State Masters"
+"#14 Mixed 100-119 200 Free Relay","1:56.74","12/17/2023 Somerset County YMCA"
+"#23 Mixed 100-119 200 Medley Relay","2:09.55","12/17/2023 Somerset County YMCA"
+"#14 Mixed 160-199 200 Free Relay","2:07.80","12/16/2018 Somerset County YMCA"
+"#23 Mixed 160-199 200 Medley Relay","210.87 :","12/14/2025 Landshark Aquatic Masters"
+"#14 Mixed 200-239 200 Free Relay","212.18","12/10/2016 Garden State Masters"
+"#23 Mixed 200-239 200 Medley Relay","2:15.99","12/14/2025 Somerset County YMCA"
+"#14 Mixed 240-279 200 Free Relay","2:20.58","12/16/2018 Colonials 1776"
+"#23 Mixed 240-279 200 Medley Relay","2:27.57","12/16/2018 Colonials 1776"
+"#23 Mixed 320-359 200 Medley Relay","5:31.51","12/16/2018 Somerset County YMCA"
+`;
+
+        const container = document.getElementById('records-container');
+        const ageFilter = document.getElementById('filter-age');
+        const eventFilter = document.getElementById('filter-event');
+        const genderFilter = document.getElementById('filter-gender');
+        const nameFilter = document.getElementById('filter-name');
+        const clearBtn = document.getElementById('clear-filters');
+
+        let records = [];
+        let groupedRecords = {};
+
+        function parseTime(timeStr) {
+            if (!timeStr) return "NT";
+            let clean = timeStr.replace(/[\s:]+$/, '').trim();
+            if (/^\d{3,}\.\d{2}$/.test(clean)) {
+                const parts = clean.split('.');
+                clean = `${parts[0].slice(0, -2)}:${parts[0].slice(-2)}.${parts[1]}`;
+            }
+            if (clean.startsWith(':')) {
+                clean = clean.substring(1);
+                 if (/^\d{3,}\.\d{2}$/.test(clean)) {
+                    const parts = clean.split('.');
+                    clean = `${parts[0].slice(0, -2)}:${parts[0].slice(-2)}.${parts[1]}`;
+                 }
+            }
+             clean = clean.replace(/\s*:$/, '');
+            return clean;
+        }
+
+        function parseData() {
+            try {
+                // Fix Smart Quotes
+                const cleanData = rawData
+                    .replace(/[\u2018\u2019]/g, "'")
+                    .replace(/[\u201C\u201D]/g, '"');
+
+                const lines = cleanData.split('\n').filter(line => line.trim().startsWith('"#'));
+                
+                container.innerHTML = `<div class="text-center text-slate-500 py-4">Found ${lines.length} raw records. Processing...</div>`;
+
+                lines.forEach(line => {
+                    const parts = line.match(/"([^"]+)"/g);
+                    if (!parts || parts.length < 3) return;
+
+                    const eventPart = parts[0].replace(/"/g, '').trim();
+                    const timePart = parts[1].replace(/"/g, '').trim();
+                    const infoPart = parts[2].replace(/"/g, '').trim();
+
+                    const eventMatch = eventPart.match(/#\d+\s+(Women|Men|Mixed)\s+(\d+-\d+)\s+(.+)/);
+                    
+                    if (!eventMatch) return;
+
+                    const gender = eventMatch[1];
+                    const ageGroup = eventMatch[2];
+                    const eventName = eventMatch[3];
+                    const time = parseTime(timePart);
+
+                    const dateMatch = infoPart.match(/(\d{1,2}\/\d{1,2}\/\d{4})/);
+                    let date = "";
+                    let swimmerInfo = infoPart;
+
+                    if (dateMatch) {
+                        date = dateMatch[0];
+                        swimmerInfo = infoPart.replace(date, '').trim();
+                        swimmerInfo = swimmerInfo.replace(/^[- ]+|[- ]+$/g, '');
+                    }
+
+                    let name = swimmerInfo;
+                    let club = "";
+                    
+                    // FIX: If it is a Relay, keep the whole name together (don't split Club)
+                    if (eventName.includes('Relay')) {
+                         name = swimmerInfo;
+                         club = ""; 
+                    } 
+                    // Normal Swimmers (Split Name and Club)
+                    else if (swimmerInfo.includes('-')) {
+                        const splitInfo = swimmerInfo.split('-');
+                        club = splitInfo[splitInfo.length - 1].trim();
+                        name = splitInfo.slice(0, -1).join('-').trim();
+                    } else {
+                         const words = swimmerInfo.split(' ');
+                         // Only split if it looks like "Name Name Club"
+                         if (words.length > 1) {
+                             club = words.pop();
+                             name = words.join(' ');
+                         } else {
+                             name = swimmerInfo;
+                         }
+                    }
+                records.push({ ageGroup, gender, eventName, time, date, name, club });
+                });
+            } catch (err) {
+                container.innerHTML = `<div class="text-center text-red-500 font-bold py-12">Error parsing data: ${err.message}</div>`;
+                console.error(err);
+            }
+        }
+
+        function groupRecords(data) {
+            const groups = {};
+            data.forEach(rec => {
+                if (!groups[rec.ageGroup]) groups[rec.ageGroup] = {};
+                if (!groups[rec.ageGroup][rec.eventName]) groups[rec.ageGroup][rec.eventName] = { women: null, men: null, mixed: null };
+                if (rec.gender === 'Women') groups[rec.ageGroup][rec.eventName].women = rec;
+                else if (rec.gender === 'Men') groups[rec.ageGroup][rec.eventName].men = rec;
+                else groups[rec.ageGroup][rec.eventName].mixed = rec;
+            });
+            return groups;
+        }
+
+        function renderTable() {
+            try {
+                container.innerHTML = '';
+                
+                const selectedAge = ageFilter.value;
+                const selectedEvent = eventFilter.value;
+                const selectedGender = genderFilter.value;
+                const searchName = nameFilter.value.toLowerCase();
+
+                const filteredRecords = records.filter(rec => {
+                    const matchAge = selectedAge === 'all' || rec.ageGroup === selectedAge;
+                    const matchEvent = selectedEvent === 'all' || rec.eventName === selectedEvent;
+                    const matchGender = selectedGender === 'all' || rec.gender === selectedGender;
+                    const matchName = !searchName || rec.name.toLowerCase().includes(searchName);
+                    return matchAge && matchEvent && matchGender && matchName;
+                });
+
+                if (filteredRecords.length === 0) {
+                    container.innerHTML = '<div class="text-center text-slate-500 py-8">No records found matching your filters.</div>';
+                    return;
+                }
+
+                const grouped = groupRecords(filteredRecords);
+                const sortedAgeGroups = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
+
+                const strokeOrder = { 'Fly': 4, 'Back': 2, 'Breast': 3, 'Free': 1, 'IM': 5 };
+                function getEventRank(eventName) {
+                    // 1. Handle Relays (Send to very bottom, e.g., 90000+)
+                    if (eventName.includes('Relay')) {
+                        return 90000 + (eventName.includes('Medley') ? 2 : 1); 
+                    }
+
+                    // 2. Parse standard events
+                    const parts = eventName.split(' ');
+                    const distance = parseInt(parts[0]) || 0;
+                    const stroke = parts.slice(1).join(' '); // Handles "Free" or "IM"
+
+                    const sRank = strokeOrder[stroke] || 99; // 99 for unknown strokes
+                    
+                    // 3. New Formula: Increase multiplier to 10,000 so "1500" doesn't overlap with next category
+                    return (sRank * 10000) + distance;
+                }
+
+                sortedAgeGroups.forEach(age => {
+                    const eventsObj = grouped[age];
+                    const eventNames = Object.keys(eventsObj).sort((a, b) => getEventRank(a) - getEventRank(b));
+
+                    const section = document.createElement('div');
+                    section.className = 'bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mb-8'; 
+                    
+                    const header = document.createElement('div');
+                    header.className = 'bg-slate-100 px-4 py-4 border-b border-slate-200';
+                    header.innerHTML = `<h2 class="text-xl font-bold text-slate-800">Age Group: <span class="text-sky-600">${age}</span></h2>`;
+                    section.appendChild(header);
+
+                    const tableContainer = document.createElement('div');
+                    tableContainer.className = 'overflow-x-auto table-container';
+                    
+                    const table = document.createElement('table');
+                    table.className = 'min-w-full text-left text-sm whitespace-nowrap';
+                    
+                    table.innerHTML = `
+                        <thead class="table-header border-b border-slate-200">
+                            <tr class="hidden md:table-row bg-slate-50 border-b border-slate-200">
+                                <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-r border-slate-200">Women</th>
+                                <th class="bg-slate-200 border-x border-slate-300"></th> 
+                                <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-l border-slate-200">Men / Mixed</th>
+                            </tr>
+                            <tr>
+                                <th scope="col" class="px-2 py-3 text-right hidden md:table-cell w-1/12 text-slate-500">Date</th>
+                                <th scope="col" class="px-2 py-3 text-right hidden sm:table-cell w-2/12 text-slate-500">Name</th>
+                                <th scope="col" class="px-2 py-3 text-right w-1/12 font-bold text-slate-600">Time</th>
+                                <th scope="col" class="px-4 py-3 text-center bg-slate-200 font-bold text-slate-800 w-2/12 border-x border-slate-300">Event</th>
+                                <th scope="col" class="px-2 py-3 text-left w-1/12 font-bold text-slate-600">Time</th>
+                                <th scope="col" class="px-2 py-3 text-left hidden sm:table-cell w-2/12 text-slate-500">Name</th>
+                                <th scope="col" class="px-2 py-3 text-left hidden md:table-cell w-1/12 text-slate-500">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100"></tbody>
+                    `;
+
+                    const tbody = table.querySelector('tbody');
+
+                    eventNames.forEach(evt => {
+                        const rowData = eventsObj[evt];
+                        const w = rowData.women;
+                        const m = rowData.men;
+                        const x = rowData.mixed;
+
+                        // Standard Men/Women Row
+                        if (w || m) {
+                            const tr = document.createElement('tr');
+                            tr.className = 'record-row hover:bg-slate-50 transition-colors align-top';
+                            
+                            // Women
+                            const wDate = w ? w.date : '';
+                            const wTime = w ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${w.time}</span>` : '<span class="text-slate-300">-</span>';
+                            const wMobileInfo = w ? `<div class="md:hidden mb-1 mobile-wrap"><div class="text-xs font-bold text-slate-700 leading-tight">${w.name}</div><div class="text-xs text-slate-500">${w.club} • ${w.date}</div></div>` : '';
+                            const wFullDetails = w ? `<div class="font-medium text-slate-700">${w.name}</div><div class="text-xs text-slate-500">${w.club}</div>` : '';
+
+                            // Men
+                            const mDate = m ? m.date : '';
+                            const mTime = m ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${m.time}</span>` : '<span class="text-slate-300">-</span>';
+                            const mMobileInfo = m ? `<div class="md:hidden mb-1 mobile-wrap text-right"><div class="text-xs font-bold text-slate-700 leading-tight">${m.name}</div><div class="text-xs text-slate-500">${m.club} • ${m.date}</div></div>` : '';
+                            const mFullDetails = m ? `<div class="font-medium text-slate-700">${m.name}</div><div class="text-xs text-slate-500">${m.club}</div>` : '';
+                            
+                            tr.innerHTML = `
+                                <td class="px-2 py-3 text-right text-slate-500 hidden md:table-cell text-xs">${wDate}</td>
+                                <td class="px-2 py-3 text-right hidden sm:table-cell">${wFullDetails}</td>
+                                <td class="px-2 py-3 text-right">${wMobileInfo}${wTime}</td>
+                                <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-50 border-x border-slate-100 text-sm align-middle">${evt}</td>
+                                <td class="px-2 py-3 text-left">${mMobileInfo}${mTime}</td>
+                                <td class="px-2 py-3 text-left hidden sm:table-cell">${mFullDetails}</td>
+                                <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${mDate}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        }
+
+                        // Mixed Record Row (NOW SPLIT INTO COLUMNS)
+                        if (x) {
+                            const tr = document.createElement('tr');
+                            tr.className = 'record-row bg-slate-50';
+                            
+                            // Mobile View needs all info in the Time column
+                            const xMobileInfo = `<div class="md:hidden mb-1 mobile-wrap text-left"><div class="text-xs font-bold text-slate-700 leading-tight">${x.name}</div><div class="text-xs text-slate-500">${x.club} • ${x.date}</div></div>`;
+                            
+                            // Desktop View splits info into separate columns
+                            const xFullDetails = `<div class="font-medium text-slate-700">${x.name}</div><div class="text-xs text-slate-500">${x.club}</div>`;
+
+                            tr.innerHTML = `
+                                <td colspan="3" class="px-2 py-3 text-right italic text-slate-500 text-xs md:text-sm">Mixed Record</td>
+                                
+                                <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-100 border-x border-slate-200 text-sm align-middle">${evt}</td>
+                                
+                                <td class="px-2 py-3 text-left">
+                                    ${xMobileInfo}
+                                    <span class="font-mono font-semibold text-purple-600 text-lg md:text-base">${x.time}</span>
+                                </td>
+                                
+                                <td class="px-2 py-3 text-left hidden sm:table-cell">${xFullDetails}</td>
+                                <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${x.date}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        }
+                    });
+
+                    tableContainer.appendChild(table);
+                    section.appendChild(tableContainer);
+                    container.appendChild(section);
+                });
+            } catch (err) {
+                 container.innerHTML += `<div class="text-center text-red-500 font-bold py-4">Error rendering table: ${err.message}</div>`;
+                 console.error(err);
+            }
+        }
+
+        function populateFilters() {
+            try {
+                const ageGroups = [...new Set(records.map(r => r.ageGroup))].sort((a,b) => parseInt(a) - parseInt(b));
+                const events = [...new Set(records.map(r => r.eventName))].sort();
+
+                ageGroups.forEach(age => {
+                    const opt = document.createElement('option');
+                    opt.value = age;
+                    opt.textContent = age;
+                    ageFilter.appendChild(opt);
+                });
+
+                events.forEach(evt => {
+                    const opt = document.createElement('option');
+                    opt.value = evt;
+                    opt.textContent = evt;
+                    eventFilter.appendChild(opt);
+                });
+            } catch(e) { console.error("Filter error", e); }
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            parseData();
+            populateFilters();
+            renderTable();
+        });
+
+        // --- Event Listeners ---
+        ageFilter.addEventListener('change', renderTable);
+        eventFilter.addEventListener('change', renderTable);
+        genderFilter.addEventListener('change', renderTable);
+        nameFilter.addEventListener('input', renderTable);
+        clearBtn.addEventListener('click', () => {
+            ageFilter.value = 'all';
+            eventFilter.value = 'all';
+            genderFilter.value = 'all';
+            nameFilter.value = '';
+            renderTable();
+        });
+
+    </script>
+</body>
+</html>
