@@ -9,21 +9,15 @@
     <style>
         /* Base Page Styles */
         html, body {
-            overflow-x: hidden; /* Prevent page wobble */
+            overflow-x: hidden;
             width: 100%;
             font-family: 'Roboto', sans-serif;
             background-color: #f8fafc;
             color: #1e293b;
         }
-        h1, h2, h3 {
-            font-family: 'Montserrat', sans-serif;
-        }
-        .accent-bg {
-            background-color: #0ea5e9; /* Sky 500 */
-        }
-        .accent-text {
-            color: #0ea5e9;
-        }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+        .accent-bg { background-color: #0ea5e9; }
+        .accent-text { color: #0ea5e9; }
         .table-header {
             background-color: #f1f5f9;
             color: #475569;
@@ -31,18 +25,9 @@
             font-size: 0.75rem;
             letter-spacing: 0.05em;
         }
-        .record-row:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        .record-row:hover {
-            background-color: #f0f9ff;
-        }
-        /* Mobile text wrapping adjustments */
-        .mobile-wrap {
-            white-space: normal !important;
-            word-wrap: break-word;
-        }
-        /* Nav Link Styles */
+        .record-row:nth-child(even) { background-color: #f8fafc; }
+        .record-row:hover { background-color: #f0f9ff; }
+        .mobile-wrap { white-space: normal !important; word-wrap: break-word; }
         .nav-link.active { color: #0284c7; border-bottom: 2px solid #0284c7; font-weight: 700; }
     </style>
 </head>
@@ -79,40 +64,26 @@
         
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-                
                 <div class="space-y-1">
                     <label for="filter-age" class="block text-sm font-medium text-slate-600">Age Group</label>
-                    <select id="filter-age" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
-                        <option value="all">All Age Groups</option>
-                    </select>
+                    <select id="filter-age" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm bg-slate-50 border"><option value="all">All Age Groups</option></select>
                 </div>
-
                 <div class="space-y-1">
                     <label for="filter-event" class="block text-sm font-medium text-slate-600">Event</label>
-                    <select id="filter-event" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
-                        <option value="all">All Events</option>
-                    </select>
+                    <select id="filter-event" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm bg-slate-50 border"><option value="all">All Events</option></select>
                 </div>
-
                  <div class="space-y-1">
                     <label for="filter-gender" class="block text-sm font-medium text-slate-600">Gender</label>
-                    <select id="filter-gender" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
-                        <option value="all">All</option>
-                        <option value="Women">Women</option>
-                        <option value="Men">Men</option>
-                        <option value="Mixed">Mixed</option>
+                    <select id="filter-gender" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm bg-slate-50 border">
+                        <option value="all">All</option><option value="Women">Women</option><option value="Men">Men</option><option value="Mixed">Mixed</option>
                     </select>
                 </div>
-
                 <div class="space-y-1 lg:col-span-1">
                     <label for="filter-name" class="block text-sm font-medium text-slate-600">Swimmer Name</label>
-                    <input type="text" id="filter-name" placeholder="Search name..." class="w-full rounded-md border-slate-300 py-2 pl-3 pr-3 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
+                    <input type="text" id="filter-name" placeholder="Search name..." class="w-full rounded-md border-slate-300 py-2 pl-3 pr-3 text-sm bg-slate-50 border">
                 </div>
-
                 <div>
-                    <button id="clear-filters" class="w-full rounded-md border border-transparent accent-bg px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition-colors">
-                        Clear Filters
-                    </button>
+                    <button id="clear-filters" class="w-full rounded-md bg-sky-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 transition-colors">Clear Filters</button>
                 </div>
             </div>
         </div>
@@ -123,15 +94,12 @@
 
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-slate-500">
-                &copy; 2025 Somerset County YMCA. All rights reserved.
-            </p>
-        </div>
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <p class="text-center text-sm text-slate-500">&copy; 2025 Somerset County YMCA. All rights reserved.</p>
     </footer>
 
     <script>
+        // --- DATA WITH YOUR UPDATES APPLIED ---
         const rawData = `
 "#22 Women 18-24 25 Free","14.72","12/15/2019 Cara Cannilla - SCYM"
 "#18 Women 18-24 50 Free","28.29","Rebecca L Cubbler - SVY 12/19/2021"
@@ -178,7 +146,7 @@
 "#2 Women 30-34 400 Free","4:54.27","12/19/2021 Krysten M Sciacca CHEL"
 "#1 Women 30-34 1500 Free","18:57.87","12/10/2022 Krysten Sciacca CHEL"
 "#12 Women 30-34 25 Back","16.99","12/8/2024 Kristen Moll - SCYM"
-"#5 Women 30-34 50 Back","36.85","12/11/2022 Anne Laurita - SCYM"
+"#5 Women 30-34 50 Back","36.55","12/17/2023 Anne Laurita SCYM"
 "#20 Women 30-34 100 Back","1:14.35","12/16/2018 Krysten Sciacca CHEL"
 "#16 Women 30-34 200 Back","240.11 :","12/10/2016 Marissa Licata NEM"
 "#7 Women 30-34 25 Breast","16.31","12/14/2025 Morgan O Brighenti LASH"
@@ -221,7 +189,7 @@
 "#1 Women 40-44 1500 Free","20:04.56","12/13/2025 Cynthia Roberts LASH"
 "#12 Women 40-44 25 Back","21.06","12/17/2017 Ellen Ryan SCYM"
 "#5 Women 40-44 50 Back","34.68","12/17/2023 Tatiana Kundla - UC06"
-"#20 Women 40-44 100 Back","1:29.59","12/11/2022 Emily Caldwell - RMT"
+"#20 Women 40-44 100 Back","1:15.88","12/8/2024 Tatiana Kundla UC06"
 "#16 Women 40-44 200 Back","3:24.90","12/10/2016 Jennifer Kyff - WM"
 "#21 Women 40-44 50 Breast","40.27","12/15/2019 Paola Morchio - SCYM"
 "#17 Women 40-44 100 Breast","1:27.22","12/8/2024 Tatiana Kundla UC06"
@@ -282,7 +250,7 @@
 "#2 Women 55-59 400 Free","5:37.62","12/10/2016 Deborah R Cipriano - GSM"
 "#1 Women 55-59 1500 Free","19:42.32","12/18/2021 Laurie Hug - 1776"
 "#12 Women 55-59 25 Back","20.48","12/8/2024 Jennifer Korten - UC06"
-"#5 Women 55-59 50 Back","39.08","12/19/2021 Lorna Cialdella-Morehead - SCYM"
+"#5 Women 55-59 50 Back","38.69","12/17/2017 Marie Restrepo 1693"
 "#20 Women 55-59 100 Back","1:17.35","12/16/2018 Stephanie Saucy 1776"
 "#16 Women 55-59 200 Back","2:46.04","12/15/2019 Stephanie Saucy 1776"
 "#7 Women 55-59 25 Breast","23.23","12/8/2024 Adele Morgan - SCYM"
@@ -388,13 +356,13 @@
 "#9 Women 85-89 50 Fly","1:27.37","12/15/2019 Janet H Moeller SCYM"
 "#13 Women 85-89 100 IM","238.88 :","12/15/2019 Janet H Moeller SCYM"
 "#12 Women 90-94 25 Back","1:01.09","12/19/2021 Joy Tsuzuki - SCYM"
-"#5 Women 90-94 50 Back","3:26.77","12/19/2021 Joy Tsuzuki - SCYM"
+"#5 Women 90-94 50 Back","2:56.52","12/17/2023 Joy Tsuzuki SCYM"
 "#12 Women 95-99 25 Back","1:17.84","12/14/2025 Joy Tsuzuki - SCYM"
 "#5 Women 95-99 50 Back","2:47.44","12/14/2025 Joy Tsuzuki - SCYM"
 "#22 Men 18-24 25 Free","13.27","12/17/2017 Oriol Hernandez - SCYM"
 "#18 Men 18-24 50 Free","23.93","12/11/2022 Kurt von Autenried CHEL"
 "#11 Men 18-24 100 Free","52.83","12/11/2022 Joseph Scerbo - IUSC"
-"#6 Men 18-24 200 Free","2:09.18","12/19/2021 Mathias N Altman-Kurosaki AGUA"
+"#6 Men 18-24 200 Free","2:09.18","12/19/2021 Mathias N Altman-Kurosaki - AGUA"
 "#2 Men 18-24 400 Free","4:33.39","12/19/2021 Mathias N Altman-Kurosaki - AGUA"
 "#1 Men 18-24 1500 Free","19:06.63","12/7/2024 John Rawlins - 1776"
 "#12 Men 18-24 25 Back","13.68","12/17/2023 Matthew Marsh - SVY"
@@ -454,17 +422,17 @@
 "#8 Men 30-34 200 IM","240.13 :","12/15/2019 Michael Kerr BERK"
 "#3 Men 30-34 400 IM","6:01.03","12/17/2023 Ryan Callanan 1776"
 "#22 Men 35-39 25 Free","10.66","12/8/2024 Cameron Owen FSAM"
-"#18 Men 35-39 50 Free","24.28","12/14/2025 Bradley Gorter - FAWSM"
+"#18 Men 35-39 50 Free","24.28","12/14/2025 Bradley Gorter - FASWM"
 "#11 Men 35-39 100 Free","50.21","12/8/2024 Cameron Owen - FSAM"
 "#6 Men 35-39 200 Free","2:11.18","12/11/2022 Jorge Angulo - SCYM"
 "#2 Men 35-39 400 Free","4:39.73","12/11/2022 Jorge Angulo - SCYM"
 "#1 Men 35-39 1500 Free","19:23.87","12/10/2022 Jorge R Angulo - SCYM"
 "#12 Men 35-39 25 Back","18.44","12/8/2024 Brendan Carter - UC06"
 "#5 Men 35-39 50 Back","28.75","12/14/2025 Bradley Gorter FASWM"
-"#20 Men 35-39 100 Back","1:18.47","12/17/2023 David O'Dougherty SCYM"
+"#20 Men 35-39 100 Back","1:17.82","12/8/2024 Nick Pierson JACM"
 "#16 Men 35-39 200 Back","2:58.72","12/19/2021 Michael Burghoffer RMT"
 "#7 Men 35-39 25 Breast","17.57","12/8/2024 Brendan Carter UC06"
-"#21 Men 35-39 50 Breast","33.12","12/14/2025 Bradley Gorter FAWSM"
+"#21 Men 35-39 50 Breast","33.12","12/14/2025 Bradley Gorter FASWM"
 "#17 Men 35-39 100 Breast","1:23.47","12/8/2024 Nick Pierson - JACM"
 "#10 Men 35-39 200 Breast","2:54.97","12/16/2018 Michael Sabala CHEL"
 "#15 Men 35-39 25 Fly","10.93","12/8/2024 Cameron Owen - FSAM"
@@ -480,7 +448,7 @@
 "#2 Men 40-44 400 Free",":436.76","12/16/2018 Eric Stull - SVY"
 "#1 Men 40-44 1500 Free","18:53.03","12/10/2022 Michael Sabala CHEL"
 "#12 Men 40-44 25 Back","16.18","12/17/2017 Michael Bohan - UC07"
-"#5 Men 40-44 50 Back","31.57","12/11/2022 Michael Sabala - CHEL"
+"#5 Men 40-44 50 Back","30.96","12/8/2024 Ryan Heath TNYA"
 "#20 Men 40-44 100 Back","1:10.68","12/14/2025 Geoffrey Overdorff LASH"
 "#16 Men 40-44 200 Back","2:41.93","12/8/2024 Sean Thomas MARY"
 "#7 Men 40-44 25 Breast","14.50","12/11/2022 Bradford Houchins SVY"
@@ -646,8 +614,8 @@
 "#6 Men 80-84 200 Free","4:48.31","12/10/2016 David D Gladfelter 1776"
 "#2 Men 80-84 400 Free","10:45.67","12/17/2017 David Gladfelter 1776"
 "#1 Men 80-84 1500 Free","34:11.07","12/17/2023 Bob Hopkins - GSM"
-"#5 Men 80-84 50 Back","51.70","12/17/2023 Bob Hopkins - GSM"
-"#20 Men 80-84 100 Back","1:52.39","12/17/2023 Bob Hopkings - GSM"
+"#5 Men 80-84 50 Back","39.77","12/8/2024 Richard Alexander GSM"
+"#20 Men 80-84 100 Back","1:34.01","12/8/2024 Richard Alexander GSM"
 "#16 Men 80-84 200 Back","410.71 :","12/17/2023 Bob Hopkins - GSM"
 "#21 Men 80-84 50 Breast","43.55","12/8/2024 Jim Dragon - GSM"
 "#17 Men 80-84 100 Breast","2:29.80","12/15/2019 E Dieter Wunderlich- BERK"
@@ -675,31 +643,31 @@
 "#13 Men 85-89 100 IM","238.18 :","12/19/2021 David D Gladfelter 1776"
 "#8 Men 85-89 200 IM","6:32.06","12/11/2022 David D Gladfelter 1776"
 "#3 Men 85-89 400 IM","14:30.81","12/11/2022 David D Gladfelter 1776"
-"#14 Women 120-159 200 Free Relay","216.35 :","12/10/2016 Somerset County YMCA"
-"#23 Women 120-159 200 Medley Relay","2:23.27","12/8/2024 Landshark Aquatic Masters"
-"#14 Women 160-199 200 Free Relay","2:11.55","12/14/2025 Somerset County YMCA"
-"#23 Women 160-199 200 Medley Relay","2:29.07","12/11/2022 Somerset County YMCA"
-"#14 Women 200-239 200 Free Relay","2:59.50","12/16/2018 Somerset County YMCA"
-"#14 Men 72-99 200 Free Relay","1:56.45","12/17/2017 Somerset County YMCA"
-"#23 Men 100-119 200 Medley Relay","1:54.63","12/11/2022 Chelsea Piers"
-"#14 Men 120-159 200 Free Relay","2:04.85","12/11/2022 Raritan Bay at South Amboy"
-"#14 Men 160-199 200 Free Relay","2:22.85","12/11/2022 Green Wave Masters"
-"#23 Men 160-199 200 Medley Relay","245.79 :","12/15/2019 Green Wave Masters"
-"#14 Men 200-239 200 Free Relay","1:58.87","12/17/2017 Somerset County YMCA"
-"#23 Men 200-239 200 Medley Relay","214.39 :","12/17/2023 Somerset County YMCA"
-"#14 Men 240-279 200 Free Relay","2:26.99","12/16/2018 Somerset County YMCA"
-"#23 Men 240-279 200 Medley Relay","2:25.06","12/11/2022 Somerset County YMCA"
-"#14 Men 280-319 200 Free Relay","217.30 :","12/10/2016 Garden State Masters"
-"#23 Men 280-319 200 Medley Relay","2:46.56","12/10/2016 Garden State Masters"
-"#14 Mixed 100-119 200 Free Relay","1:56.74","12/17/2023 Somerset County YMCA"
-"#23 Mixed 100-119 200 Medley Relay","2:09.55","12/17/2023 Somerset County YMCA"
-"#14 Mixed 160-199 200 Free Relay","2:07.80","12/16/2018 Somerset County YMCA"
-"#23 Mixed 160-199 200 Medley Relay","210.87 :","12/14/2025 Landshark Aquatic Masters"
-"#14 Mixed 200-239 200 Free Relay","212.18 :","12/10/2016 Garden State Masters"
-"#23 Mixed 200-239 200 Medley Relay","2:15.99","12/14/2025 Somerset County YMCA"
-"#14 Mixed 240-279 200 Free Relay","2:20.58","12/16/2018 Colonials 1776"
-"#23 Mixed 240-279 200 Medley Relay","2:27.57","12/16/2018 Colonials 1776"
-"#23 Mixed 320-359 200 Medley Relay","5:31.51","12/16/2018 Somerset County YMCA"
+"#14 Women 120-159 200 Free Relay","216.35 :","12/10/2016 Somerset County YMCA - V.Heuser, P.Morchio, R.Glaser, L.Hartnett"
+"#23 Women 120-159 200 Medley Relay","2:23.27","12/8/2024 Landshark Aquatic Masters - A Sheridan, M Brighenti, C Roberts, K Andreus"
+"#14 Women 160-199 200 Free Relay","2:11.55","12/14/2025 Somerset County YMCA - I Lu, L Cialdella-Morehead, A Oliveira, M Bull"
+"#23 Women 160-199 200 Medley Relay","2:29.07","12/11/2022 Somerset County YMCA - A.Laurita, P.Morchio, L.Morehead, K.Cummings"
+"#14 Women 200-239 200 Free Relay","2:59.50","12/16/2018 Somerset County YMCA - M.Breslin, L.Begley, L. Vollbrechthause, A. Oliveira"
+"#14 Men 72-99 200 Free Relay","1:56.45","12/17/2017 Somerset County YMCA - C.VanDijk, N.Schwed, O.Hernandez, M.Doerr"
+"#23 Men 100-119 200 Medley Relay","1:54.63","12/11/2022 Chelsea Piers - D Harmon, D Chung, K von Autenried, L Manfredi"
+"#14 Men 120-159 200 Free Relay","2:04.85","12/11/2022 Raritan Bay at South Amboy - C Mollloy, F Norek, H Kugler, D Russell"
+"#14 Men 160-199 200 Free Relay","2:22.85","12/11/2022 Green Wave Masters - R Wismer, G Faughnan, R Strang, M Freeman"
+"#23 Men 160-199 200 Medley Relay","245.79 :","12/15/2019 Green Wave Masters - M.Freeman, R.Wismer, Ro. Rojas, G.Faughnan"
+"#14 Men 200-239 200 Free Relay","1:58.87","12/17/2017 Somerset County YMCA - E.Tsuzuki, R.Perkins, M.Israel, B.Glenn"
+"#23 Men 200-239 200 Medley Relay","214.39 :","12/17/2023 Somerset County YMCA - J.Faria, D.O'Dougherty, P.Mikalainis, E.Tsuzuki"
+"#14 Men 240-279 200 Free Relay","2:26.99","12/16/2018 Somerset County YMCA - E.Sharp, T.Burkardt, D.DeSimone, J.Sullivan"
+"#23 Men 240-279 200 Medley Relay","2:25.06","12/11/2022 Somerset County YMCA - K Niemi, B Sjovall, E Sharp, E Tsuzuki"
+"#14 Men 280-319 200 Free Relay","217.30 :","12/10/2016 Garden State Masters - L.Seidman, J.Katz, J.Zakim, A. Wein"
+"#23 Men 280-319 200 Medley Relay","2:46.56","12/10/2016 Garden State Masters - J.Zakim, A.Wein, L.Seidman, J.Katz"
+"#14 Mixed 100-119 200 Free Relay","1:56.74","12/17/2023 Somerset County YMCA - A.Laurita, E.Sarier, M. Laurita, K.Sarier"
+"#23 Mixed 100-119 200 Medley Relay","2:09.55","12/17/2023 Somerset County YMCA - A.Laurita, E.Sarier, M. Laurita, K.Sarier"
+"#14 Mixed 160-199 200 Free Relay","2:07.80","12/16/2018 Somerset County YMCA - P.Morchio, S.Wolf, C.Cannilla, E.Tsuzuki"
+"#23 Mixed 160-199 200 Medley Relay","210.87 :","12/14/2025 Landshark Aquatic Masters - A Sheridan, M Brighenti, G Overdorff, G Oxley"
+"#14 Mixed 200-239 200 Free Relay","212.18 :","12/10/2016 Garden State Masters - D.Cipriano, L.Ditommaso, B.Hopkins, J.Faria"
+"#23 Mixed 200-239 200 Medley Relay","2:15.99","12/14/2025 Somerset County YMCA - R Curry, M Bull, L Beverini, L Cialdella-Morehead"
+"#14 Mixed 240-279 200 Free Relay","2:20.58","12/16/2018 Colonials 1776 - J.Amundsen, J.Jastremski, L.Hug, R.Jones"
+"#23 Mixed 240-279 200 Medley Relay","2:27.57","12/16/2018 Colonials 1776 - M.Matz, M.Wolff, R.Jones, S.Saucy"
+"#23 Mixed 320-359 200 Medley Relay","5:31.51","12/16/2018 Somerset County YMCA - J.Tsuzuki, J.Katz, J.Moeller, J.Whelpley"
 `;
 
         const container = document.getElementById('records-container');
@@ -711,6 +679,20 @@
 
         let records = [];
         let groupedRecords = {};
+
+        // --- NEW: Team Abbreviations Mapping ---
+        const teamAbbreviations = {
+            "Somerset County YMCA": "SCYM",
+            "Landshark Aquatic Masters": "LASH",
+            "Landshark Aquatic": "LASH",
+            "Garden State Masters": "GSM",
+            "Colonials 1776": "1776",
+            "Raritan Bay at South Amboy": "RBAY",
+            "Raritan Bay Area": "RBAY",
+            "Green Wave Masters": "GWMS",
+            "Chelsea Piers": "CHEL",
+            "Chelsea Piers Fitness": "CHEL"
+        };
 
         function parseTime(timeStr) {
             if (!timeStr) return "NT";
@@ -730,6 +712,7 @@
             return clean;
         }
 
+        // --- UPDATED PARSING LOGIC ---
         function parseData() {
             try {
                 // Fix Smart Quotes
@@ -750,12 +733,21 @@
                     const infoPart = parts[2].replace(/"/g, '').trim();
 
                     const eventMatch = eventPart.match(/#\d+\s+(Women|Men|Mixed)\s+(\d+-\d+)\s+(.+)/);
-                    
-                    if (!eventMatch) return;
+                    if (!eventMatch && eventPart.includes("Relay")) {
+                        var relayMatch = eventPart.match(/#\d+\s+(Women|Men|Mixed)\s+(\d+\+?|\d+-\d+)\s+(.+)/);
+                         if (relayMatch) {
+                            var gender = relayMatch[1];
+                            var ageGroup = relayMatch[2];
+                            var eventName = relayMatch[3];
+                            if (ageGroup.includes('+')) ageGroup = ageGroup.replace('+', '-99');
+                         }
+                         else return;
+                    } else if (eventMatch) {
+                        var gender = eventMatch[1];
+                        var ageGroup = eventMatch[2];
+                        var eventName = eventMatch[3];
+                    } else return;
 
-                    const gender = eventMatch[1];
-                    const ageGroup = eventMatch[2];
-                    const eventName = eventMatch[3];
                     const time = parseTime(timePart);
 
                     const dateMatch = infoPart.match(/(\d{1,2}\/\d{1,2}\/\d{4})/);
@@ -771,19 +763,22 @@
                     let name = swimmerInfo;
                     let club = "";
                     
-                    // FIX: If it is a Relay, keep the whole name together (don't split Club)
+                    // --- PARSING LOGIC ---
+                    
+                    // 1. Relays: Name field contains everything (Teams + Swimmers)
                     if (eventName.includes('Relay')) {
                          name = swimmerInfo;
                          club = ""; 
                     } 
-                    // Normal Swimmers (Split Name and Club)
-                    else if (swimmerInfo.includes('-')) {
-                        const splitInfo = swimmerInfo.split('-');
+                    // 2. Look for " - " (Space Hyphen Space) separator
+                    else if (swimmerInfo.includes(' - ')) {
+                        const splitInfo = swimmerInfo.split(' - ');
                         club = splitInfo[splitInfo.length - 1].trim();
-                        name = splitInfo.slice(0, -1).join('-').trim();
-                    } else {
+                        name = splitInfo.slice(0, -1).join(' - ').trim();
+                    } 
+                    // 3. Fallback: Take last word if no " - " found
+                    else {
                          const words = swimmerInfo.split(' ');
-                         // Only split if it looks like "Name Name Club"
                          if (words.length > 1) {
                              club = words.pop();
                              name = words.join(' ');
@@ -791,7 +786,8 @@
                              name = swimmerInfo;
                          }
                     }
-                records.push({ ageGroup, gender, eventName, time, date, name, club });
+
+                    records.push({ ageGroup, gender, eventName, time, date, name, club });
                 });
             } catch (err) {
                 container.innerHTML = `<div class="text-center text-red-500 font-bold py-12">Error parsing data: ${err.message}</div>`;
@@ -828,143 +824,188 @@
                     return matchAge && matchEvent && matchGender && matchName;
                 });
 
-                if (filteredRecords.length === 0) {
+                // --- SEPARATE RELAYS FROM INDIVIDUALS ---
+                const indRecords = filteredRecords.filter(r => !r.eventName.toLowerCase().includes('relay'));
+                const relRecords = filteredRecords.filter(r => r.eventName.toLowerCase().includes('relay'));
+
+                if (indRecords.length === 0 && relRecords.length === 0) {
                     container.innerHTML = '<div class="text-center text-slate-500 py-8">No records found matching your filters.</div>';
                     return;
                 }
 
-                const grouped = groupRecords(filteredRecords);
-                const sortedAgeGroups = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
-
-                const strokeOrder = { 'Fly': 4, 'Back': 2, 'Breast': 3, 'Free': 1, 'IM': 5 };
-                function getEventRank(eventName) {
-                    // 1. Handle Relays (Send to very bottom, e.g., 90000+)
-                    if (eventName.includes('Relay')) {
-                        return 90000 + (eventName.includes('Medley') ? 2 : 1); 
-                    }
-
-                    // 2. Parse standard events
-                    const parts = eventName.split(' ');
-                    const distance = parseInt(parts[0]) || 0;
-                    const stroke = parts.slice(1).join(' '); // Handles "Free" or "IM"
-
-                    const sRank = strokeOrder[stroke] || 99; // 99 for unknown strokes
-                    
-                    // 3. New Formula: Increase multiplier to 10,000 so "1500" doesn't overlap with next category
-                    return (sRank * 10000) + distance;
+                // Render Individual Events
+                if (indRecords.length > 0) {
+                    renderGroupSet(indRecords, false);
                 }
 
-                sortedAgeGroups.forEach(age => {
-                    const eventsObj = grouped[age];
-                    const eventNames = Object.keys(eventsObj).sort((a, b) => getEventRank(a) - getEventRank(b));
+                // Render Relays at the Bottom with Divider
+                if (relRecords.length > 0) {
+                    const sep = document.createElement('div');
+                    sep.className = "mt-12 mb-6 pt-8 border-t-4 border-slate-200 text-center";
+                    sep.innerHTML = '<h2 class="text-3xl font-bold text-slate-700 uppercase tracking-widest">Relay Results</h2>';
+                    container.appendChild(sep);
+                    renderGroupSet(relRecords, true);
+                }
 
-                    const section = document.createElement('div');
-                    section.className = 'bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mb-8'; 
-                    
-                    const header = document.createElement('div');
-                    header.className = 'bg-slate-100 px-4 py-4 border-b border-slate-200';
-                    header.innerHTML = `<h2 class="text-xl font-bold text-slate-800">Age Group: <span class="text-sky-600">${age}</span></h2>`;
-                    section.appendChild(header);
-
-                    const tableContainer = document.createElement('div');
-                    tableContainer.className = 'overflow-x-auto table-container';
-                    
-                    const table = document.createElement('table');
-                    table.className = 'min-w-full text-left text-sm whitespace-nowrap';
-                    
-                    table.innerHTML = `
-                        <thead class="table-header border-b border-slate-200">
-                            <tr class="hidden md:table-row bg-slate-50 border-b border-slate-200">
-                                <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-r border-slate-200">Women</th>
-                                <th class="bg-slate-200 border-x border-slate-300"></th> 
-                                <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-l border-slate-200">Men / Mixed</th>
-                            </tr>
-                            <tr>
-                                <th scope="col" class="px-2 py-3 text-right hidden md:table-cell w-1/12 text-slate-500">Date</th>
-                                <th scope="col" class="px-2 py-3 text-right hidden sm:table-cell w-2/12 text-slate-500">Name</th>
-                                <th scope="col" class="px-2 py-3 text-right w-1/12 font-bold text-slate-600">Time</th>
-                                <th scope="col" class="px-4 py-3 text-center bg-slate-200 font-bold text-slate-800 w-2/12 border-x border-slate-300">Event</th>
-                                <th scope="col" class="px-2 py-3 text-left w-1/12 font-bold text-slate-600">Time</th>
-                                <th scope="col" class="px-2 py-3 text-left hidden sm:table-cell w-2/12 text-slate-500">Name</th>
-                                <th scope="col" class="px-2 py-3 text-left hidden md:table-cell w-1/12 text-slate-500">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100"></tbody>
-                    `;
-
-                    const tbody = table.querySelector('tbody');
-
-                    eventNames.forEach(evt => {
-                        const rowData = eventsObj[evt];
-                        const w = rowData.women;
-                        const m = rowData.men;
-                        const x = rowData.mixed;
-
-                        // Standard Men/Women Row
-                        if (w || m) {
-                            const tr = document.createElement('tr');
-                            tr.className = 'record-row hover:bg-slate-50 transition-colors align-top';
-                            
-                            // Women
-                            const wDate = w ? w.date : '';
-                            const wTime = w ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${w.time}</span>` : '<span class="text-slate-300">-</span>';
-                            const wMobileInfo = w ? `<div class="md:hidden mb-1 mobile-wrap"><div class="text-xs font-bold text-slate-700 leading-tight">${w.name}</div><div class="text-xs text-slate-500">${w.club} • ${w.date}</div></div>` : '';
-                            const wFullDetails = w ? `<div class="font-medium text-slate-700">${w.name}</div><div class="text-xs text-slate-500">${w.club}</div>` : '';
-
-                            // Men
-                            const mDate = m ? m.date : '';
-                            const mTime = m ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${m.time}</span>` : '<span class="text-slate-300">-</span>';
-                            const mMobileInfo = m ? `<div class="md:hidden mb-1 mobile-wrap text-right"><div class="text-xs font-bold text-slate-700 leading-tight">${m.name}</div><div class="text-xs text-slate-500">${m.club} • ${m.date}</div></div>` : '';
-                            const mFullDetails = m ? `<div class="font-medium text-slate-700">${m.name}</div><div class="text-xs text-slate-500">${m.club}</div>` : '';
-                            
-                            tr.innerHTML = `
-                                <td class="px-2 py-3 text-right text-slate-500 hidden md:table-cell text-xs">${wDate}</td>
-                                <td class="px-2 py-3 text-right hidden sm:table-cell">${wFullDetails}</td>
-                                <td class="px-2 py-3 text-right">${wMobileInfo}${wTime}</td>
-                                <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-50 border-x border-slate-100 text-sm align-middle">${evt}</td>
-                                <td class="px-2 py-3 text-left">${mMobileInfo}${mTime}</td>
-                                <td class="px-2 py-3 text-left hidden sm:table-cell">${mFullDetails}</td>
-                                <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${mDate}</td>
-                            `;
-                            tbody.appendChild(tr);
-                        }
-
-                        // Mixed Record Row (NOW SPLIT INTO COLUMNS)
-                        if (x) {
-                            const tr = document.createElement('tr');
-                            tr.className = 'record-row bg-slate-50';
-                            
-                            // Mobile View needs all info in the Time column
-                            const xMobileInfo = `<div class="md:hidden mb-1 mobile-wrap text-left"><div class="text-xs font-bold text-slate-700 leading-tight">${x.name}</div><div class="text-xs text-slate-500">${x.club} • ${x.date}</div></div>`;
-                            
-                            // Desktop View splits info into separate columns
-                            const xFullDetails = `<div class="font-medium text-slate-700">${x.name}</div><div class="text-xs text-slate-500">${x.club}</div>`;
-
-                            tr.innerHTML = `
-                                <td colspan="3" class="px-2 py-3 text-right italic text-slate-500 text-xs md:text-sm">Mixed Record</td>
-                                
-                                <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-100 border-x border-slate-200 text-sm align-middle">${evt}</td>
-                                
-                                <td class="px-2 py-3 text-left">
-                                    ${xMobileInfo}
-                                    <span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${x.time}</span>
-                                </td>
-                                
-                                <td class="px-2 py-3 text-left hidden sm:table-cell">${xFullDetails}</td>
-                                <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${x.date}</td>
-                            `;
-                            tbody.appendChild(tr);
-                        }
-                    });
-
-                    tableContainer.appendChild(table);
-                    section.appendChild(tableContainer);
-                    container.appendChild(section);
-                });
             } catch (err) {
                  container.innerHTML += `<div class="text-center text-red-500 font-bold py-4">Error rendering table: ${err.message}</div>`;
                  console.error(err);
             }
+        }
+
+        function renderGroupSet(dataSubset, isRelay) {
+            const grouped = groupRecords(dataSubset);
+            const sortedAgeGroups = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
+
+            const strokeOrder = { 'Fly': 4, 'Back': 2, 'Breast': 3, 'Free': 1, 'IM': 5 };
+            
+            function getEventRank(eventName) {
+                if (eventName.includes('Relay')) {
+                    return 90000 + (eventName.includes('Medley') ? 2 : 1); 
+                }
+                const parts = eventName.split(' ');
+                const distance = parseInt(parts[0]) || 0;
+                const stroke = parts.slice(1).join(' '); 
+                const sRank = strokeOrder[stroke] || 99; 
+                return (sRank * 10000) + distance;
+            }
+
+            // Function to abbreviate relay names
+            function formatRelayName(fullName) {
+                // If it contains a hyphen, try to split and replace club
+                if (fullName.includes(' - ')) {
+                    const parts = fullName.split(' - ');
+                    const clubPart = parts[0].trim();
+                    const namesPart = parts[1] ? parts[1].trim() : '';
+                    
+                    let newClub = clubPart;
+                    // Check against map
+                    for (const [full, abbr] of Object.entries(teamAbbreviations)) {
+                        if (clubPart.includes(full)) {
+                            newClub = abbr;
+                            break;
+                        }
+                    }
+                    return `<span class="font-bold text-slate-700">${newClub}</span><br><span class="text-xs text-slate-500">${namesPart}</span>`;
+                }
+                return fullName;
+            }
+
+            sortedAgeGroups.forEach(age => {
+                const eventsObj = grouped[age];
+                const eventNames = Object.keys(eventsObj).sort((a, b) => getEventRank(a) - getEventRank(b));
+
+                const section = document.createElement('div');
+                section.className = 'bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mb-8'; 
+                
+                const header = document.createElement('div');
+                header.className = 'bg-slate-100 px-4 py-4 border-b border-slate-200';
+                
+                // --- CUSTOM HEADER FOR RELAYS ---
+                const displayAge = isRelay ? `Relay ${age}` : age;
+                header.innerHTML = `<h2 class="text-xl font-bold text-slate-800">Age Group: <span class="text-sky-600">${displayAge}</span></h2>`;
+                section.appendChild(header);
+
+                const tableContainer = document.createElement('div');
+                tableContainer.className = 'overflow-x-auto table-container';
+                
+                const table = document.createElement('table');
+                table.className = 'min-w-full text-left text-sm whitespace-nowrap';
+                
+                table.innerHTML = `
+                    <thead class="table-header border-b border-slate-200">
+                        <tr class="hidden md:table-row bg-slate-50 border-b border-slate-200">
+                            <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-r border-slate-200">Women</th>
+                            <th class="bg-slate-200 border-x border-slate-300"></th> 
+                            <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-l border-slate-200">Men / Mixed</th>
+                        </tr>
+                        <tr>
+                            <th scope="col" class="px-2 py-3 text-right hidden md:table-cell w-1/12 text-slate-500">Date</th>
+                            <th scope="col" class="px-2 py-3 text-right hidden sm:table-cell w-2/12 text-slate-500">Name</th>
+                            <th scope="col" class="px-2 py-3 text-right w-1/12 font-bold text-slate-600">Time</th>
+                            <th scope="col" class="px-4 py-3 text-center bg-slate-200 font-bold text-slate-800 w-2/12 border-x border-slate-300">Event</th>
+                            <th scope="col" class="px-2 py-3 text-left w-1/12 font-bold text-slate-600">Time</th>
+                            <th scope="col" class="px-2 py-3 text-left hidden sm:table-cell w-2/12 text-slate-500">Name</th>
+                            <th scope="col" class="px-2 py-3 text-left hidden md:table-cell w-1/12 text-slate-500">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100"></tbody>
+                `;
+
+                const tbody = table.querySelector('tbody');
+
+                eventNames.forEach(evt => {
+                    const rowData = eventsObj[evt];
+                    const w = rowData.women;
+                    const m = rowData.men;
+                    const x = rowData.mixed;
+
+                    // Standard Men/Women Row
+                    if (w || m) {
+                        const tr = document.createElement('tr');
+                        tr.className = 'record-row hover:bg-slate-50 transition-colors align-top';
+                        
+                        // Apply Relay Formatting if needed
+                        let wNameDisplay = w ? (isRelay ? formatRelayName(w.name) : w.name) : '';
+                        let mNameDisplay = m ? (isRelay ? formatRelayName(m.name) : m.name) : '';
+
+                        // Women Data
+                        const wDate = w ? w.date : '';
+                        const wTime = w ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${w.time}</span>` : '<span class="text-slate-300">-</span>';
+                        
+                        const wMobileInfo = w ? `<div class="md:hidden mb-1 mobile-wrap"><div class="text-xs font-bold text-slate-700 leading-tight">${wNameDisplay}</div><div class="text-xs text-slate-500">${isRelay ? '' : (w.club + ' • ')} ${w.date}</div></div>` : '';
+                        const wFullDetails = w ? `<div class="font-medium text-slate-700">${wNameDisplay}</div><div class="text-xs text-slate-500">${isRelay ? '' : w.club}</div>` : '';
+
+                        // Men Data
+                        const mDate = m ? m.date : '';
+                        const mTime = m ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${m.time}</span>` : '<span class="text-slate-300">-</span>';
+                        
+                        const mMobileInfo = m ? `<div class="md:hidden mb-1 mobile-wrap text-right"><div class="text-xs font-bold text-slate-700 leading-tight">${mNameDisplay}</div><div class="text-xs text-slate-500">${isRelay ? '' : (m.club + ' • ')} ${m.date}</div></div>` : '';
+                        const mFullDetails = m ? `<div class="font-medium text-slate-700">${mNameDisplay}</div><div class="text-xs text-slate-500">${isRelay ? '' : m.club}</div>` : '';
+                        
+                        tr.innerHTML = `
+                            <td class="px-2 py-3 text-right text-slate-500 hidden md:table-cell text-xs">${wDate}</td>
+                            <td class="px-2 py-3 text-right hidden sm:table-cell">${wFullDetails}</td>
+                            <td class="px-2 py-3 text-right">${wMobileInfo}${wTime}</td>
+                            <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-50 border-x border-slate-100 text-sm align-middle">${evt}</td>
+                            <td class="px-2 py-3 text-left">${mMobileInfo}${mTime}</td>
+                            <td class="px-2 py-3 text-left hidden sm:table-cell">${mFullDetails}</td>
+                            <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${mDate}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+
+                    // Mixed Record Row
+                    if (x) {
+                        const tr = document.createElement('tr');
+                        tr.className = 'record-row bg-slate-50';
+                        
+                        let xNameDisplay = isRelay ? formatRelayName(x.name) : x.name;
+
+                        // Mobile View needs all info in the Time column
+                        const xMobileInfo = `<div class="md:hidden mb-1 mobile-wrap text-left"><div class="text-xs font-bold text-slate-700 leading-tight">${xNameDisplay}</div><div class="text-xs text-slate-500">${isRelay ? '' : (x.club + ' • ')} ${x.date}</div></div>`;
+                        
+                        // Desktop View splits info into separate columns
+                        const xFullDetails = `<div class="font-medium text-slate-700">${xNameDisplay}</div><div class="text-xs text-slate-500">${isRelay ? '' : x.club}</div>`;
+
+                        tr.innerHTML = `
+                            <td colspan="3" class="px-2 py-3 text-right italic text-slate-500 text-xs md:text-sm">Mixed Record</td>
+                            <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-100 border-x border-slate-200 text-sm align-middle">${evt}</td>
+                            <td class="px-2 py-3 text-left">
+                                ${xMobileInfo}
+                                <span class="font-mono font-semibold text-purple-600 text-lg md:text-base">${x.time}</span>
+                            </td>
+                            <td class="px-2 py-3 text-left hidden sm:table-cell">${xFullDetails}</td>
+                            <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${x.date}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+                });
+
+                tableContainer.appendChild(table);
+                section.appendChild(tableContainer);
+                container.appendChild(section);
+            });
         }
 
         function populateFilters() {
