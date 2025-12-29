@@ -7,29 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Base Page Styles */
-        html, body {
-            overflow-x: hidden;
-            width: 100%;
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
+        html, body { overflow-x: hidden; width: 100%; font-family: 'Roboto', sans-serif; background-color: #f8fafc; color: #1e293b; }
         h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
-        .accent-bg { background-color: #0ea5e9; }
-        .accent-text { color: #0ea5e9; }
-        .table-header {
-            background-color: #f1f5f9;
-            color: #475569;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
+        .table-header { background-color: #f1f5f9; color: #475569; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
         .record-row:nth-child(even) { background-color: #f8fafc; }
         .record-row:hover { background-color: #f0f9ff; }
         .mobile-wrap { white-space: normal !important; word-wrap: break-word; }
-        
-        /* Nav Link Styles */
         .nav-link.active { color: #0284c7; border-bottom: 2px solid #0284c7; font-weight: 700; }
     </style>
 </head>
@@ -52,8 +35,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-center text-slate-800 leading-tight">
                 SHY Meet - Last Chance Records
-                <span class="block text-sm sm:text-base font-medium text-slate-500 mt-2">Somerset County YMCA (as of 5/18/2025)</span>
+                <span class="block text-sm sm:text-base font-medium text-slate-500 mt-2">as of 5/19/2025 (25 SCY)</span>
             </h1>
+            <div class="mt-4 text-center">
+                <a href="https://www.usms.org/comp/meets/" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline font-medium text-sm transition-colors">
+                    U.S. Masters Swimming Event Results Database &rarr;
+                </a>
+            </div>    
+    
         </div>
     </header>
 
@@ -61,40 +50,26 @@
         
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-                
                 <div class="space-y-1">
-                    <label for="filter-age" class="block text-sm font-medium text-slate-600">Age Group</label>
-                    <select id="filter-age" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
-                        <option value="all">All Age Groups</option>
-                    </select>
+                    <label class="block text-sm font-medium text-slate-600">Age Group</label>
+                    <select id="filter-age" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm bg-slate-50 border"><option value="all">All Age Groups</option></select>
                 </div>
-
                 <div class="space-y-1">
-                    <label for="filter-event" class="block text-sm font-medium text-slate-600">Event</label>
-                    <select id="filter-event" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
-                        <option value="all">All Events</option>
-                    </select>
+                    <label class="block text-sm font-medium text-slate-600">Event</label>
+                    <select id="filter-event" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm bg-slate-50 border"><option value="all">All Events</option></select>
                 </div>
-
                  <div class="space-y-1">
-                    <label for="filter-gender" class="block text-sm font-medium text-slate-600">Gender</label>
-                    <select id="filter-gender" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
-                        <option value="all">All</option>
-                        <option value="Women">Women</option>
-                        <option value="Men">Men</option>
-                        <option value="Mixed">Mixed</option>
+                    <label class="block text-sm font-medium text-slate-600">Gender</label>
+                    <select id="filter-gender" class="w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm bg-slate-50 border">
+                        <option value="all">All</option><option value="Women">Women</option><option value="Men">Men</option><option value="Mixed">Mixed</option>
                     </select>
                 </div>
-
                 <div class="space-y-1 lg:col-span-1">
-                    <label for="filter-name" class="block text-sm font-medium text-slate-600">Swimmer Name</label>
-                    <input type="text" id="filter-name" placeholder="Search name..." class="w-full rounded-md border-slate-300 py-2 pl-3 pr-3 text-base focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 sm:text-sm bg-slate-50 border">
+                    <label class="block text-sm font-medium text-slate-600">Swimmer Name</label>
+                    <input type="text" id="filter-name" placeholder="Search name..." class="w-full rounded-md border-slate-300 py-2 pl-3 pr-3 text-sm bg-slate-50 border">
                 </div>
-
                 <div>
-                    <button id="clear-filters" class="w-full rounded-md border border-transparent accent-bg px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition-colors">
-                        Clear Filters
-                    </button>
+                    <button id="clear-filters" class="w-full rounded-md bg-sky-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 transition-colors">Clear Filters</button>
                 </div>
             </div>
         </div>
@@ -102,19 +77,14 @@
         <div id="records-container" class="space-y-8">
             <div class="text-center text-slate-500 py-12">Loading records data...</div>
         </div>
-
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-slate-500">
-                &copy; 2025 Somerset County YMCA. All rights reserved.
-            </p>
-        </div>
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <p class="text-center text-sm text-slate-500">&copy; 2025 Somerset County YMCA</p>
     </footer>
 
     <script>
-    // --- UPDATED PARSING LOGIC TO FIX TEAMS ---
+    // --- RAW DATA ---
     const rawData = `
 "#1 Women 18-24 1650 Free","21:57.49","5/4/2019 Cara Cannilla - SCYM-7"
 "#1 Women 25-29 1650 Free","17:31.96","5/17/2025 Megan Bull Somerset County"
@@ -596,6 +566,7 @@
         let records = [];
         let groupedRecords = {};
 
+        // Helper to format times
         function parseTime(timeStr) {
             if (!timeStr) return "NT";
             let clean = timeStr.replace(/[\s:]+$/, '').trim();
@@ -614,7 +585,7 @@
             return clean;
         }
 
-        // --- NEW: INTELLIGENT PARSING FOR HYPHENS ---
+        // --- INTELLIGENT PARSING ---
         function parseData() {
             try {
                 const cleanData = rawData
@@ -654,6 +625,7 @@
                     const timePart = parts[1].replace(/"/g, '').trim();
                     const infoPart = parts[2].replace(/"/g, '').trim();
 
+                    // Parse Event Header
                     const eventMatch = eventPart.match(/#\d+\s+(Women|Men|Mixed)\s+(\d+-\d+)\s+(.+)/);
                     if (!eventMatch && eventPart.includes("Relay")) {
                         var relayMatch = eventPart.match(/#\d+\s+(Women|Men|Mixed)\s+(\d+\+?|\d+-\d+)\s+(.+)/);
@@ -672,6 +644,7 @@
 
                     const time = parseTime(timePart);
 
+                    // Parse Date and Name/Club
                     const dateMatch = infoPart.match(/(\d{1,2}\/\d{1,2}\/\d{4})/);
                     let date = "";
                     let swimmerInfo = infoPart;
@@ -685,7 +658,7 @@
                     let name = swimmerInfo;
                     let club = "";
                     
-                    // --- REVISED PARSING LOGIC ---
+                    // --- PARSING LOGIC ---
                     
                     // 1. Relays: Name field contains everything (Teams + Swimmers)
                     if (eventName.includes('Relay')) {
@@ -760,125 +733,148 @@
                     return matchAge && matchEvent && matchGender && matchName;
                 });
 
-                if (filteredRecords.length === 0) {
-                    container.innerHTML = '<div class="text-center text-slate-500 py-8">No records found matching your filters.</div>';
-                    return;
+                // Split records into INDIVIDUAL vs RELAY
+                const indRecords = filteredRecords.filter(r => !r.eventName.toLowerCase().includes('relay'));
+                const relRecords = filteredRecords.filter(r => r.eventName.toLowerCase().includes('relay'));
+
+                // Render Individual Events First
+                if (indRecords.length > 0) {
+                    renderGroupSet(indRecords);
                 }
 
-                const grouped = groupRecords(filteredRecords);
-                const sortedAgeGroups = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
-
-                const strokeOrder = { 'Fly': 4, 'Back': 2, 'Breast': 3, 'Free': 1, 'IM': 5 };
-                function getEventRank(eventName) {
-                    if (eventName.includes('Relay')) return 90000 + (eventName.includes('Medley') ? 2 : 1); 
-                    const parts = eventName.split(' ');
-                    const distance = parseInt(parts[0]) || 0;
-                    const stroke = parts.slice(1).join(' '); 
-                    const sRank = strokeOrder[stroke] || 99; 
-                    return (sRank * 10000) + distance;
+                // Render Relays at the Bottom
+                if (relRecords.length > 0) {
+                    // Add a visual separator
+                    const sep = document.createElement('div');
+                    sep.className = "mt-12 mb-6 pt-8 border-t-4 border-slate-200 text-center";
+                    sep.innerHTML = '<h2 class="text-3xl font-bold text-slate-700 uppercase tracking-widest">Relay Results</h2>';
+                    container.appendChild(sep);
+                    
+                    renderGroupSet(relRecords);
+                }
+                
+                if (indRecords.length === 0 && relRecords.length === 0) {
+                     container.innerHTML = '<div class="text-center text-slate-500 py-8">No records found matching your filters.</div>';
                 }
 
-                sortedAgeGroups.forEach(age => {
-                    const eventsObj = grouped[age];
-                    const eventNames = Object.keys(eventsObj).sort((a, b) => getEventRank(a) - getEventRank(b));
-
-                    const section = document.createElement('div');
-                    section.className = 'bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mb-8'; 
-                    
-                    const header = document.createElement('div');
-                    header.className = 'bg-slate-100 px-4 py-4 border-b border-slate-200';
-                    header.innerHTML = `<h2 class="text-xl font-bold text-slate-800">Age Group: <span class="text-sky-600">${age}</span></h2>`;
-                    section.appendChild(header);
-
-                    const tableContainer = document.createElement('div');
-                    tableContainer.className = 'overflow-x-auto table-container';
-                    
-                    const table = document.createElement('table');
-                    table.className = 'min-w-full text-left text-sm whitespace-nowrap';
-                    
-                    table.innerHTML = `
-                        <thead class="table-header border-b border-slate-200">
-                            <tr class="hidden md:table-row bg-slate-50 border-b border-slate-200">
-                                <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-r border-slate-200">Women</th>
-                                <th class="bg-slate-200 border-x border-slate-300"></th> 
-                                <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-l border-slate-200">Men / Mixed</th>
-                            </tr>
-                            <tr>
-                                <th scope="col" class="px-2 py-3 text-right hidden md:table-cell w-1/12 text-slate-500">Date</th>
-                                <th scope="col" class="px-2 py-3 text-right hidden sm:table-cell w-2/12 text-slate-500">Name</th>
-                                <th scope="col" class="px-2 py-3 text-right w-1/12 font-bold text-slate-600">Time</th>
-                                <th scope="col" class="px-4 py-3 text-center bg-slate-200 font-bold text-slate-800 w-2/12 border-x border-slate-300">Event</th>
-                                <th scope="col" class="px-2 py-3 text-left w-1/12 font-bold text-slate-600">Time</th>
-                                <th scope="col" class="px-2 py-3 text-left hidden sm:table-cell w-2/12 text-slate-500">Name</th>
-                                <th scope="col" class="px-2 py-3 text-left hidden md:table-cell w-1/12 text-slate-500">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100"></tbody>
-                    `;
-
-                    const tbody = table.querySelector('tbody');
-
-                    eventNames.forEach(evt => {
-                        const rowData = eventsObj[evt];
-                        const w = rowData.women;
-                        const m = rowData.men;
-                        const x = rowData.mixed;
-
-                        if (w || m) {
-                            const tr = document.createElement('tr');
-                            tr.className = 'record-row hover:bg-slate-50 transition-colors align-top';
-                            
-                            const wDate = w ? w.date : '';
-                            const wTime = w ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${w.time}</span>` : '<span class="text-slate-300">-</span>';
-                            const wMobileInfo = w ? `<div class="md:hidden mb-1 mobile-wrap"><div class="text-xs font-bold text-slate-700 leading-tight">${w.name}</div><div class="text-xs text-slate-500">${w.club} • ${w.date}</div></div>` : '';
-                            const wFullDetails = w ? `<div class="font-medium text-slate-700">${w.name}</div><div class="text-xs text-slate-500">${w.club}</div>` : '';
-
-                            const mDate = m ? m.date : '';
-                            const mTime = m ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${m.time}</span>` : '<span class="text-slate-300">-</span>';
-                            const mMobileInfo = m ? `<div class="md:hidden mb-1 mobile-wrap text-right"><div class="text-xs font-bold text-slate-700 leading-tight">${m.name}</div><div class="text-xs text-slate-500">${m.club} • ${m.date}</div></div>` : '';
-                            const mFullDetails = m ? `<div class="font-medium text-slate-700">${m.name}</div><div class="text-xs text-slate-500">${m.club}</div>` : '';
-                            
-                            tr.innerHTML = `
-                                <td class="px-2 py-3 text-right text-slate-500 hidden md:table-cell text-xs">${wDate}</td>
-                                <td class="px-2 py-3 text-right hidden sm:table-cell">${wFullDetails}</td>
-                                <td class="px-2 py-3 text-right">${wMobileInfo}${wTime}</td>
-                                <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-50 border-x border-slate-100 text-sm align-middle">${evt}</td>
-                                <td class="px-2 py-3 text-left">${mMobileInfo}${mTime}</td>
-                                <td class="px-2 py-3 text-left hidden sm:table-cell">${mFullDetails}</td>
-                                <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${mDate}</td>
-                            `;
-                            tbody.appendChild(tr);
-                        }
-
-                        if (x) {
-                            const tr = document.createElement('tr');
-                            tr.className = 'record-row bg-slate-50';
-                            
-                            const xMobileInfo = `<div class="md:hidden mb-1 mobile-wrap text-left"><div class="text-xs font-bold text-slate-700 leading-tight">${x.name}</div><div class="text-xs text-slate-500">${x.club} • ${x.date}</div></div>`;
-                            const xFullDetails = `<div class="font-medium text-slate-700">${x.name}</div><div class="text-xs text-slate-500">${x.club}</div>`;
-
-                            tr.innerHTML = `
-                                <td colspan="3" class="px-2 py-3 text-right italic text-slate-500 text-xs md:text-sm">Mixed Record</td>
-                                <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-100 border-x border-slate-200 text-sm align-middle">${evt}</td>
-                                <td class="px-2 py-3 text-left">
-                                    ${xMobileInfo}
-                                    <span class="font-mono font-semibold text-purple-600 text-lg md:text-base">${x.time}</span>
-                                </td>
-                                <td class="px-2 py-3 text-left hidden sm:table-cell">${xFullDetails}</td>
-                                <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${x.date}</td>
-                            `;
-                            tbody.appendChild(tr);
-                        }
-                    });
-
-                    tableContainer.appendChild(table);
-                    section.appendChild(tableContainer);
-                    container.appendChild(section);
-                });
             } catch (err) {
                  container.innerHTML += `<div class="text-center text-red-500 font-bold py-4">Error rendering table: ${err.message}</div>`;
                  console.error(err);
             }
+        }
+
+        // Helper function to render a set of records (e.g. just Individuals or just Relays)
+        function renderGroupSet(dataSubset) {
+            const grouped = groupRecords(dataSubset);
+            const sortedAgeGroups = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
+
+            const strokeOrder = { 'Fly': 4, 'Back': 2, 'Breast': 3, 'Free': 1, 'IM': 5 };
+            function getEventRank(eventName) {
+                if (eventName.includes('Relay')) return 90000 + (eventName.includes('Medley') ? 2 : 1); 
+                const parts = eventName.split(' ');
+                const distance = parseInt(parts[0]) || 0;
+                const stroke = parts.slice(1).join(' '); 
+                const sRank = strokeOrder[stroke] || 99; 
+                return (sRank * 10000) + distance;
+            }
+
+            sortedAgeGroups.forEach(age => {
+                const eventsObj = grouped[age];
+                const eventNames = Object.keys(eventsObj).sort((a, b) => getEventRank(a) - getEventRank(b));
+
+                const section = document.createElement('div');
+                section.className = 'bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mb-8'; 
+                
+                const header = document.createElement('div');
+                header.className = 'bg-slate-100 px-4 py-4 border-b border-slate-200';
+                header.innerHTML = `<h2 class="text-xl font-bold text-slate-800">Age Group: <span class="text-sky-600">${age}</span></h2>`;
+                section.appendChild(header);
+
+                const tableContainer = document.createElement('div');
+                tableContainer.className = 'overflow-x-auto table-container';
+                
+                const table = document.createElement('table');
+                table.className = 'min-w-full text-left text-sm whitespace-nowrap';
+                
+                table.innerHTML = `
+                    <thead class="table-header border-b border-slate-200">
+                        <tr class="hidden md:table-row bg-slate-50 border-b border-slate-200">
+                            <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-r border-slate-200">Women</th>
+                            <th class="bg-slate-200 border-x border-slate-300"></th> 
+                            <th colspan="3" class="py-2 text-center text-sky-800 font-bold tracking-widest text-xs uppercase border-l border-slate-200">Men / Mixed</th>
+                        </tr>
+                        <tr>
+                            <th scope="col" class="px-2 py-3 text-right hidden md:table-cell w-1/12 text-slate-500">Date</th>
+                            <th scope="col" class="px-2 py-3 text-right hidden sm:table-cell w-2/12 text-slate-500">Name</th>
+                            <th scope="col" class="px-2 py-3 text-right w-1/12 font-bold text-slate-600">Time</th>
+                            <th scope="col" class="px-4 py-3 text-center bg-slate-200 font-bold text-slate-800 w-2/12 border-x border-slate-300">Event</th>
+                            <th scope="col" class="px-2 py-3 text-left w-1/12 font-bold text-slate-600">Time</th>
+                            <th scope="col" class="px-2 py-3 text-left hidden sm:table-cell w-2/12 text-slate-500">Name</th>
+                            <th scope="col" class="px-2 py-3 text-left hidden md:table-cell w-1/12 text-slate-500">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100"></tbody>
+                `;
+
+                const tbody = table.querySelector('tbody');
+
+                eventNames.forEach(evt => {
+                    const rowData = eventsObj[evt];
+                    const w = rowData.women;
+                    const m = rowData.men;
+                    const x = rowData.mixed;
+
+                    if (w || m) {
+                        const tr = document.createElement('tr');
+                        tr.className = 'record-row hover:bg-slate-50 transition-colors align-top';
+                        
+                        const wDate = w ? w.date : '';
+                        const wTime = w ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${w.time}</span>` : '<span class="text-slate-300">-</span>';
+                        const wMobileInfo = w ? `<div class="md:hidden mb-1 mobile-wrap"><div class="text-xs font-bold text-slate-700 leading-tight">${w.name}</div><div class="text-xs text-slate-500">${w.club} • ${w.date}</div></div>` : '';
+                        const wFullDetails = w ? `<div class="font-medium text-slate-700">${w.name}</div><div class="text-xs text-slate-500">${w.club}</div>` : '';
+
+                        const mDate = m ? m.date : '';
+                        const mTime = m ? `<span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${m.time}</span>` : '<span class="text-slate-300">-</span>';
+                        const mMobileInfo = m ? `<div class="md:hidden mb-1 mobile-wrap text-right"><div class="text-xs font-bold text-slate-700 leading-tight">${m.name}</div><div class="text-xs text-slate-500">${m.club} • ${m.date}</div></div>` : '';
+                        const mFullDetails = m ? `<div class="font-medium text-slate-700">${m.name}</div><div class="text-xs text-slate-500">${m.club}</div>` : '';
+                        
+                        tr.innerHTML = `
+                            <td class="px-2 py-3 text-right text-slate-500 hidden md:table-cell text-xs">${wDate}</td>
+                            <td class="px-2 py-3 text-right hidden sm:table-cell">${wFullDetails}</td>
+                            <td class="px-2 py-3 text-right">${wMobileInfo}${wTime}</td>
+                            <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-50 border-x border-slate-100 text-sm align-middle">${evt}</td>
+                            <td class="px-2 py-3 text-left">${mMobileInfo}${mTime}</td>
+                            <td class="px-2 py-3 text-left hidden sm:table-cell">${mFullDetails}</td>
+                            <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${mDate}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+
+                    if (x) {
+                        const tr = document.createElement('tr');
+                        tr.className = 'record-row bg-slate-50';
+                        
+                        const xMobileInfo = `<div class="md:hidden mb-1 mobile-wrap text-left"><div class="text-xs font-bold text-slate-700 leading-tight">${x.name}</div><div class="text-xs text-slate-500">${x.club} • ${x.date}</div></div>`;
+                        const xFullDetails = `<div class="font-medium text-slate-700">${x.name}</div><div class="text-xs text-slate-500">${x.club}</div>`;
+
+                        tr.innerHTML = `
+                            <td colspan="3" class="px-2 py-3 text-right italic text-slate-500 text-xs md:text-sm">Mixed Record</td>
+                            <td class="px-2 py-3 text-center font-bold text-slate-800 bg-slate-100 border-x border-slate-200 text-sm align-middle">${evt}</td>
+                            <td class="px-2 py-3 text-left">
+                                ${xMobileInfo}
+                                <span class="font-mono font-semibold text-purple-600 text-lg md:text-base">${x.time}</span>
+                            </td>
+                            <td class="px-2 py-3 text-left hidden sm:table-cell">${xFullDetails}</td>
+                            <td class="px-2 py-3 text-left text-slate-500 hidden md:table-cell text-xs">${x.date}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+                });
+
+                tableContainer.appendChild(table);
+                section.appendChild(tableContainer);
+                container.appendChild(section);
+            });
         }
 
         function populateFilters() {
