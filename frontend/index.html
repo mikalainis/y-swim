@@ -42,21 +42,36 @@
             white-space: normal !important;
             word-wrap: break-word;
         }
+        /* Nav Link Styles */
+        .nav-link.active { color: #0284c7; border-bottom: 2px solid #0284c7; font-weight: 700; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-center space-x-8 h-16 items-center">
+                <a href="index.html" class="nav-link active text-slate-900 px-1 pt-1 text-sm font-medium">
+                    Pentathlon Records
+                </a>
+                <a href="last-chance.html" class="nav-link text-slate-500 hover:text-slate-900 px-1 pt-1 text-sm font-medium">
+                    Last Chance Records
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-center text-slate-800 leading-tight">
                 Somerset County YMCA Pentathlon Records
                 <span class="block text-sm sm:text-base font-medium text-slate-500 mt-2">as of 12/14/2025 (25 SCM)</span>
             </h1>
-        <div class="mt-4 text-center">
-            <a href="https://www.usms.org/comp/meets/" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline font-medium text-sm transition-colors">
-                U.S. Masters Swimming Event Results Database &rarr;
-            </a>
-        </div>    
+            <div class="mt-4 text-center">
+                <a href="https://www.usms.org/comp/meets/" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline font-medium text-sm transition-colors">
+                    U.S. Masters Swimming Event Results Database &rarr;
+                </a>
+            </div>    
         </div>
     </header>
 
@@ -680,7 +695,7 @@
 "#23 Mixed 100-119 200 Medley Relay","2:09.55","12/17/2023 Somerset County YMCA"
 "#14 Mixed 160-199 200 Free Relay","2:07.80","12/16/2018 Somerset County YMCA"
 "#23 Mixed 160-199 200 Medley Relay","210.87 :","12/14/2025 Landshark Aquatic Masters"
-"#14 Mixed 200-239 200 Free Relay","212.18","12/10/2016 Garden State Masters"
+"#14 Mixed 200-239 200 Free Relay","212.18 :","12/10/2016 Garden State Masters"
 "#23 Mixed 200-239 200 Medley Relay","2:15.99","12/14/2025 Somerset County YMCA"
 "#14 Mixed 240-279 200 Free Relay","2:20.58","12/16/2018 Colonials 1776"
 "#23 Mixed 240-279 200 Medley Relay","2:27.57","12/16/2018 Colonials 1776"
@@ -932,7 +947,7 @@
                                 
                                 <td class="px-2 py-3 text-left">
                                     ${xMobileInfo}
-                                    <span class="font-mono font-semibold text-purple-600 text-lg md:text-base">${x.time}</span>
+                                    <span class="font-mono font-semibold text-sky-600 text-lg md:text-base">${x.time}</span>
                                 </td>
                                 
                                 <td class="px-2 py-3 text-left hidden sm:table-cell">${xFullDetails}</td>
