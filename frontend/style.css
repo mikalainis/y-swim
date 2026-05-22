@@ -1,1 +1,236 @@
-/* Add styles here */
+/* ============================================
+   SHARED STYLES — Somerset County YMCA Records
+   Used by index.html AND last-chance.html
+   ============================================ */
+
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+h1, h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ── Header ─────────────────────────────────── */
+.site-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0369a1 100%);
+}
+
+/* ── Tabs ────────────────────────────────────── */
+.tab-active {
+    border-bottom: 3px solid #38bdf8;
+    color: #0ea5e9;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.12);
+}
+.tab-inactive {
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.6);
+}
+.tab-inactive:hover {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Filter Card ─────────────────────────────── */
+.filter-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    border: 1px solid #e2e8f0;
+}
+.filter-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+}
+.filter-select {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #cbd5e1;
+    padding: 0.55rem 2rem 0.55rem 0.75rem;
+    font-size: 0.875rem;
+    background-color: #f8fafc;
+    color: #1e293b;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+}
+.filter-select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+.filter-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #cbd5e1;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.875rem;
+    background-color: #f8fafc;
+    color: #1e293b;
+    outline: none;
+}
+.filter-input:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+.filter-btn {
+    border-radius: 0.5rem;
+    background: linear-gradient(90deg, #0ea5e9, #2563eb);
+    padding: 0.6rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+    transition: opacity 0.15s;
+}
+.filter-btn:hover { opacity: 0.9; }
+
+/* ── Age Group Banner ────────────────────────── */
+.age-group-banner {
+    background: linear-gradient(90deg, #0369a1, #0ea5e9);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 1.25rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ── Table Wrapper ───────────────────────────── */
+.table-wrapper {
+    border-radius: 0 0 0.75rem 0.75rem;
+    overflow-x: auto;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    border: 1px solid #e2e8f0;
+    border-top: none;
+}
+
+/* ── Table Base ──────────────────────────────── */
+.table-header {
+    background-color: #e2e8f0;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+.record-row:nth-child(even) { background-color: #f8fafc; }
+.record-row:hover {
+    background-color: #e0f2fe;
+    transition: background 0.15s;
+}
+
+/* ── Gender Header Rows ──────────────────────── */
+.gender-header-women {
+    background: linear-gradient(90deg, #fdf2f8, #fce7f3);
+    color: #9d174d;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-align: center;
+    border-right: 2px solid #fbcfe8;
+    padding: 0.5rem 0.75rem;
+}
+.gender-header-men {
+    background: linear-gradient(90deg, #eff6ff, #dbeafe);
+    color: #1e40af;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-align: center;
+    border-left: 2px solid #bfdbfe;
+    padding: 0.5rem 0.75rem;
+}
+.gender-header-spacer {
+    background: #f1f5f9;
+    border-left: 2px solid #bae6fd;
+    border-right: 2px solid #bae6fd;
+}
+
+/* ── Event Center Column ─────────────────────── */
+.event-cell {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background-color: #f0f9ff;
+    color: #0369a1;
+    border-left: 2px solid #bae6fd;
+    border-right: 2px solid #bae6fd;
+    text-align: center;
+    white-space: nowrap;
+    padding: 0.6rem 0.75rem;
+}
+
+/* ── Swimmer Name ────────────────────────────── */
+.swimmer-name {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0c4a6e;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+}
+
+/* ── Club Name ───────────────────────────────── */
+.club-name {
+    display: block;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ── Time Cell ───────────────────────────────── */
+.time-cell {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    color: #0369a1;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+/* ── Subcolumn Headers (Date/Name/Time row) ──── */
+.sub-header {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0.75rem;
+}
+.sub-header-event {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0.75rem;
+    text-align: center;
+    border-left: 2px solid #bae6fd;
+    border-right: 2px solid #bae6fd;
+}
