@@ -19,13 +19,9 @@ function getSheetGid() {
   return PAGE_GIDS[page] || '1704234305';
 }
 
-function getElement(id) {
-  return document.getElementById(id);
-}
+function getElement(id) { return document.getElementById(id); }
 
-function normalizeText(value) {
-  return String(value ?? '').trim();
-}
+function normalizeText(value) { return String(value ?? '').trim(); }
 
 function getColumnValue(row, keys) {
   for (const key of keys) {
@@ -41,16 +37,16 @@ function parseCsv(text) {
   return text
     .replace(/\r\n/g, '\n')
     .split('\n')
-    .filter((line) => line.trim() !== '')
-    .map((line) => {
+    .filter(line => line.trim() !== '')
+    .map(line => {
       const cells = [];
       let current = '';
       let inQuotes = false;
-      for (let i = 0; i < line.length; i += 1) {
+      for (let i = 0; i < line.length; i++) {
         const char = line[i];
         if (inQuotes) {
           if (char === '"') {
-            if (line[i + 1] === '"') { current += '"'; i += 1; }
+            if (line[i + 1] === '"') { current += '"'; i++; }
             else { inQuotes = false; }
           } else { current += char; }
         } else if (char === '"') {
@@ -68,8 +64,8 @@ function parseCsv(text) {
 
 function buildRecords(rows) {
   if (!rows.length) return [];
-  const headers = rows[0].map((header) => normalizeText(header));
-  return rows.slice(1).map((row) => {
+  const headers = rows[0].map(h => normalizeText(h));
+  return rows.slice(1).map(row => {
     const values = headers.reduce((acc, header, index) => {
       acc[header] = normalizeText(row[index] ?? '');
       return acc;
@@ -81,7 +77,7 @@ function buildRecords(rows) {
     const rawAge    = getColumnValue(values, ['Age Group', 'Age', 'Category', 'Age Group/Category']);
     const rawGender = getColumnValue(values, ['Gender', 'Sex', 'M/F']);
 
-    const ageGroup = rawAge  || parseAgeGroup(rawEvent);
+    const ageGroup = rawAge    || parseAgeGroup(rawEvent);
     const gender   = rawGender || parseGender(rawEvent);
     const event    = rawEvent  || buildFallbackEvent(values);
     const name     = rawName   || buildFallbackName(values, event);
@@ -140,15 +136,42 @@ async function fetchSheetData(sheetGid) {
   return buildRecords(parseCsv(text));
 }
 
-// ── Swimmer / Club HTML helpers ───────────────────────────────────────────────
+// ── Event sort helpers ────────────────────────────────────────────────────────
+function getStrokeRank(eventStr) {
+  const lower = eventStr.toLowerCase();
+  if (lower.includes('i.m') || /\bim\b/.test(lower) || lower.includes('individual medley')) return 4;
+  if (lower.includes('medley relay') || lower.includes('medley')) return 6;
+  if (lower.includes('relay')) return 5;
+  if (lower.includes('free')) return 0;
+  if (lower.includes('back')) return 1;
+  if (lower.includes('breast')) return 2;
+  if (lower.includes('fly') || lower.includes('butterfly')) return 3;
+  return 99;
+}
+
+function getDistance(eventStr) {
+  const match = eventStr.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : 9999;
+}
+
+function sortEvents(entries) {
+  return entries.sort(([a], [b]) => {
+    const strokeDiff = getStrokeRank(a) - getStrokeRank(b);
+    if (strokeDiff !== 0) return strokeDiff;
+    return getDistance(a) - getDistance(b);
+  });
+}
+
+// ── Swimmer / Club HTML ───────────────────────────────────────────────────────
 function swimmerHtml(name, club) {
-  const nameSpan = `<span style="display:block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">${escapeHtml(name)}</span>`;
+  const nameSpan = '<span style="display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">' + escapeHtml(name) + '</span>';
   const clubSpan = club
-    ? `<span style="display:block;font-family:'Roboto Mono',monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">${escapeHtml(club)}</span>`
+    ? '<span style="display:block;font-family:Roboto Mono,monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">' + escapeHtml(club) + '</span>'
     : '';
   return nameSpan + clubSpan;
 }
 
+// ── Render table ──────────────────────────────────────────────────────────────
 function renderTable(records) {
   const container = getElement(ELEMENT_IDS.recordsContainer);
   if (!container) return;
@@ -177,7 +200,21 @@ function renderTable(records) {
       else byEvent[evt].other = r;
     });
 
-    const rows = Object.entries(byEvent).map(([event, sides]) => {
+    // Determine right column label: MEN or MIXED
+    const hasMixed = Object.values(byEvent).some(sides => {
+      return (sides.other?.gender || '').toLowerCase() === 'mixed';
+    });
+    const rightLabel     = hasMixed ? 'MIXED' : 'MEN';
+    const rightSymbol    = hasMixed ? '⚡' : '♂';
+    const rightThClass   = hasMixed ? '' : 'gender-header-men';
+    const rightThStyle   = hasMixed
+      ? 'background:linear-gradient(90deg,#faf5ff,#ede9fe);color:#6b21a8;font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-align:center;border-left:2px solid #ddd6fe;padding:0.5rem 0.75rem;'
+      : '';
+
+    // Sort events in publication order
+    const sortedEvents = sortEvents(Object.entries(byEvent));
+
+    const rows = sortedEvents.map(([event, sides]) => {
       const w = sides.women;
       const m = sides.other;
       const empty = '<span class="text-slate-300">—</span>';
@@ -189,45 +226,44 @@ function renderTable(records) {
       const mName = m ? swimmerHtml(m.name, m.source['Club']) : '';
       const mDate = m ? escapeHtml(m.source['Date'] || '') : '';
 
-      return `
-        <tr class="record-row border-b border-slate-100">
-          <td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">${wDate || (w ? '' : empty)}</td>
-          <td class="px-3 py-3">${wName || (w ? '' : empty)}</td>
-          <td class="px-3 py-3 time-cell text-right border-r-2 border-pink-100">${wTime || (w ? '' : empty)}</td>
-          <td class="event-cell">${escapeHtml(event)}</td>
-          <td class="px-3 py-3 time-cell border-l-2 border-blue-100">${mTime || (m ? '' : empty)}</td>
-          <td class="px-3 py-3">${mName || (m ? '' : empty)}</td>
-          <td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">${mDate || (m ? '' : empty)}</td>
-        </tr>`;
+      return '<tr class="record-row border-b border-slate-100">'
+        + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (wDate || (w ? '' : empty)) + '</td>'
+        + '<td class="px-3 py-3">' + (wName || (w ? '' : empty)) + '</td>'
+        + '<td class="px-3 py-3 time-cell text-right border-r-2 border-pink-100">' + (wTime || (w ? '' : empty)) + '</td>'
+        + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+        + '<td class="px-3 py-3 time-cell border-l-2 border-blue-100">' + (mTime || (m ? '' : empty)) + '</td>'
+        + '<td class="px-3 py-3">' + (mName || (m ? '' : empty)) + '</td>'
+        + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (mDate || (m ? '' : empty)) + '</td>'
+        + '</tr>';
     }).join('');
 
+    // Strip gender prefix from age label e.g. "Men 18-24" → "18-24"
     const ageLabel = ageGroup.replace(/^(Men|Women|Mixed)\s*/i, '');
 
-    return `
-      <div class="mb-10">
-        <div class="age-group-banner">🏊 Age Group: ${escapeHtml(ageLabel)}</div>
-        <div class="table-wrapper">
-          <table class="min-w-full text-left">
-            <thead>
-              <tr>
-                <th colspan="3" class="gender-header-women">♀ WOMEN</th>
-                <th class="gender-header-spacer px-3 py-2"></th>
-                <th colspan="3" class="gender-header-men">♂ MEN / MIXED</th>
-              </tr>
-              <tr>
-                <th class="sub-header">Date</th>
-                <th class="sub-header">Swimmer / Club</th>
-                <th class="sub-header text-right border-r-2 border-pink-200">Time</th>
-                <th class="sub-header-event">Event</th>
-                <th class="sub-header border-l-2 border-blue-200">Time</th>
-                <th class="sub-header">Swimmer / Club</th>
-                <th class="sub-header">Date</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 bg-white">${rows}</tbody>
-          </table>
-        </div>
-      </div>`;
+    return '<div class="mb-10">'
+      + '<div class="age-group-banner">🏊 Age Group: ' + escapeHtml(ageLabel) + '</div>'
+      + '<div class="table-wrapper">'
+      + '<table class="min-w-full text-left">'
+      + '<thead>'
+      + '<tr>'
+      + '<th colspan="3" class="gender-header-women">♀ WOMEN</th>'
+      + '<th class="gender-header-spacer px-3 py-2"></th>'
+      + '<th colspan="3" class="' + rightThClass + '" style="' + rightThStyle + '">' + rightSymbol + ' ' + rightLabel + '</th>'
+      + '</tr>'
+      + '<tr>'
+      + '<th class="sub-header">Date</th>'
+      + '<th class="sub-header">Swimmer / Club</th>'
+      + '<th class="sub-header text-right border-r-2 border-pink-200">Time</th>'
+      + '<th class="sub-header-event">Event</th>'
+      + '<th class="sub-header border-l-2 border-blue-200">Time</th>'
+      + '<th class="sub-header">Swimmer / Club</th>'
+      + '<th class="sub-header">Date</th>'
+      + '</tr>'
+      + '</thead>'
+      + '<tbody class="divide-y divide-slate-100 bg-white">' + rows + '</tbody>'
+      + '</table>'
+      + '</div>'
+      + '</div>';
   }).join('');
 
   container.innerHTML = html;
@@ -249,24 +285,14 @@ function setFilterOptions(records) {
   const ageGroups = [...new Set(records.map(r => r.ageGroup).filter(Boolean))]
     .sort((a, b) => {
       const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
+      const aOpen = a.includes('72-99'), bOpen = b.includes('72-99');
+      if (aOpen && !bOpen) return 1;
+      if (!aOpen && bOpen) return -1;
       const aPlus = a.includes('+'), bPlus = b.includes('+');
       if (aPlus && !bPlus) return 1;
       if (!aPlus && bPlus) return -1;
       return getAge(a) - getAge(b);
     });
-
-  const STROKE_ORDER = ['fly', 'back', 'breast', 'free', 'im'];
-
-  function getStrokeRank(eventStr) {
-    const lower = eventStr.toLowerCase();
-    const idx = STROKE_ORDER.findIndex(s => lower.includes(s));
-    return idx === -1 ? 99 : idx;
-  }
-
-  function getDistance(eventStr) {
-    const match = eventStr.match(/(\d+)/);
-    return match ? parseInt(match[1], 10) : 9999;
-  }
 
   const events = [...new Set(records.map(r => r.event).filter(Boolean))]
     .sort((a, b) => {
@@ -274,6 +300,7 @@ function setFilterOptions(records) {
       if (strokeDiff !== 0) return strokeDiff;
       return getDistance(a) - getDistance(b);
     });
+
   const genders = [...new Set(records.map(r => r.gender).filter(Boolean))].sort();
   const clubs   = [...new Set(records.map(r => r.source['Club']).filter(Boolean))].sort();
 
@@ -323,7 +350,7 @@ function applyFilters(records) {
 
 function showMessage(message) {
   const container = getElement(ELEMENT_IDS.recordsContainer);
-  if (container) container.innerHTML = `<div class="text-center text-slate-500 py-12">${escapeHtml(message)}</div>`;
+  if (container) container.innerHTML = '<div class="text-center text-slate-500 py-12">' + escapeHtml(message) + '</div>';
 }
 
 function updateSheetMeta(message) {
@@ -333,7 +360,7 @@ function updateSheetMeta(message) {
 
 function updateHeaderDate(date) {
   const el = getElement('header-date');
-  if (el) el.textContent = `Records as of ${date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
+  if (el) el.textContent = 'Records as of ' + date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function formatTimestamp(date) {
@@ -379,7 +406,7 @@ async function init() {
     setupEventListeners(records);
     renderTable(records);
     const now = new Date();
-    updateSheetMeta(`Live data loaded ${formatTimestamp(now)}`);
+    updateSheetMeta('Live data loaded ' + formatTimestamp(now));
     updateHeaderDate(now);
   } catch (error) {
     console.error(error);
