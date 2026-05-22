@@ -202,15 +202,11 @@ function renderTable(records) {
 
       // FIX 2: Read Date and Club directly from source columns
       const wDate = w ? escapeHtml(w.source['Date'] || '') : '';
-      const wName = w
-  ? `<span style="display:block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">${escapeHtml(w.name)}</span>${w.source['Club'] ? `<span style="display:block;font-family:'Roboto Mono',monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">${escapeHtml(w.source['Club'])}</span>` : ''}`
-  : '';
+      const wName = w ? escapeHtml(w.name + (w.source['Club'] ? ' · ' + w.source['Club'] : '')) : '';
       const wTime = w ? escapeHtml(w.time) : '';
 
       const mTime = m ? escapeHtml(m.time) : '';
-      const mName = m
-  ? `<span style="display:block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">${escapeHtml(m.name)}</span>${m.source['Club'] ? `<span style="display:block;font-family:'Roboto Mono',monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">${escapeHtml(m.source['Club'])}</span>` : ''}`
-  : '';
+      const mName = m ? escapeHtml(m.name + (m.source['Club'] ? ' · ' + m.source['Club'] : '')) : '';
       const mDate = m ? escapeHtml(m.source['Date'] || '') : '';
 
       return `
@@ -276,7 +272,14 @@ function setFilterOptions(records) {
 
   if (!ageFilter || !eventFilter || !genderFilter) return;
 
-  const ageGroups = [...new Set(records.map((r) => r.ageGroup).filter(Boolean))].sort();
+  const ageGroups = [...new Set(records.map((r) => r.ageGroup).filter(Boolean))]
+    .sort((a, b) => {
+      const aPlus = a.includes('+');
+      const bPlus = b.includes('+');
+      if (aPlus && !bPlus) return 1;   // a goes after b
+      if (!aPlus && bPlus) return -1;  // a goes before b
+      return a.localeCompare(b);       // both same type — sort normally
+    });
   const events    = [...new Set(records.map((r) => r.event).filter(Boolean))].sort();
   const genders   = [...new Set(records.map((r) => r.gender).filter(Boolean))].sort();
   const clubs     = [...new Set(records.map((r) => r.source['Club']).filter(Boolean))].sort();
