@@ -255,7 +255,25 @@ function setFilterOptions(records) {
       return getAge(a) - getAge(b);
     });
 
-  const events  = [...new Set(records.map(r => r.event).filter(Boolean))].sort();
+  const STROKE_ORDER = ['fly', 'back', 'breast', 'free', 'im'];
+
+  function getStrokeRank(eventStr) {
+    const lower = eventStr.toLowerCase();
+    const idx = STROKE_ORDER.findIndex(s => lower.includes(s));
+    return idx === -1 ? 99 : idx;
+  }
+
+  function getDistance(eventStr) {
+    const match = eventStr.match(/(\d+)/);
+    return match ? parseInt(match[1], 10) : 9999;
+  }
+
+  const events = [...new Set(records.map(r => r.event).filter(Boolean))]
+    .sort((a, b) => {
+      const strokeDiff = getStrokeRank(a) - getStrokeRank(b);
+      if (strokeDiff !== 0) return strokeDiff;
+      return getDistance(a) - getDistance(b);
+    });
   const genders = [...new Set(records.map(r => r.gender).filter(Boolean))].sort();
   const clubs   = [...new Set(records.map(r => r.source['Club']).filter(Boolean))].sort();
 
