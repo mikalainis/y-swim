@@ -274,11 +274,18 @@ function setFilterOptions(records) {
 
   const ageGroups = [...new Set(records.map((r) => r.ageGroup).filter(Boolean))]
     .sort((a, b) => {
+      // Extract the starting age number from strings like "18-24", "Men 30-34", "75+"
+      const getStartAge = (str) => {
+        const match = str.match(/(\d+)/);
+        return match ? parseInt(match[1], 10) : 9999;
+      };
       const aPlus = a.includes('+');
       const bPlus = b.includes('+');
-      if (aPlus && !bPlus) return 1;   // a goes after b
-      if (!aPlus && bPlus) return -1;  // a goes before b
-      return a.localeCompare(b);       // both same type — sort normally
+      // Push all + groups to the end
+      if (aPlus && !bPlus) return 1;
+      if (!aPlus && bPlus) return -1;
+      // Sort by starting age number
+      return getStartAge(a) - getStartAge(b);
     });
   const events    = [...new Set(records.map((r) => r.event).filter(Boolean))].sort();
   const genders   = [...new Set(records.map((r) => r.gender).filter(Boolean))].sort();
