@@ -203,23 +203,24 @@ function renderTable(records) {
 
   const html = sortedByAge.map(([ageGroup, ageRecords]) => {
 
-    // Group by event within each age group
+    // Group by event within each age group — three buckets: women, men, mixed
     const byEvent = {};
     ageRecords.forEach(r => {
       const evt = r.event || 'Unknown';
-      if (!byEvent[evt]) byEvent[evt] = { women: null, other: null };
-      if ((r.gender || '').toLowerCase() === 'women') byEvent[evt].women = r;
-      else byEvent[evt].other = r;
+      if (!byEvent[evt]) byEvent[evt] = { women: null, men: null, mixed: null };
+      const g = (r.gender || '').toLowerCase();
+      if (g === 'women') byEvent[evt].women = r;
+      else if (g === 'mixed') byEvent[evt].mixed = r;
+      else byEvent[evt].men = r;
     });
 
-    // Determine right column label: MEN or MIXED
-    const hasMixed = Object.values(byEvent).some(sides => {
-      return (sides.other?.gender || '').toLowerCase() === 'mixed';
-    });
-    const rightLabel     = hasMixed ? 'MIXED' : 'MEN';
-    const rightSymbol    = hasMixed ? '⚡' : '♂';
-    const rightThClass   = hasMixed ? '' : 'gender-header-men';
-    const rightThStyle   = hasMixed
+    // Determine right column label from actual data in this age group
+    const hasMixed = Object.values(byEvent).some(s => s.mixed !== null);
+    const hasMen   = Object.values(byEvent).some(s => s.men !== null);
+    const rightLabel  = hasMixed && !hasMen ? 'MIXED' : hasMixed ? 'MEN / MIXED' : 'MEN';
+    const rightSymbol = hasMixed && !hasMen ? '⚡' : hasMixed ? '⚡♂' : '♂';
+    const rightThClass = (hasMixed && !hasMen) ? '' : 'gender-header-men';
+    const rightThStyle = (hasMixed && !hasMen)
       ? 'background:linear-gradient(90deg,#faf5ff,#ede9fe);color:#6b21a8;font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-align:center;border-left:2px solid #ddd6fe;padding:0.5rem 0.75rem;'
       : '';
 
@@ -228,7 +229,7 @@ function renderTable(records) {
 
     const rows = sortedEvents.map(([event, sides]) => {
       const w = sides.women;
-      const m = sides.other;
+      const m = sides.men || sides.mixed; // prefer men, fall back to mixed
       const empty = '<span class="text-slate-300">—</span>';
 
       const wDate = w ? escapeHtml(w.source['Date'] || '') : '';
