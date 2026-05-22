@@ -189,7 +189,19 @@ function renderTable(records) {
     byAge[age].push(r);
   });
 
-  const html = Object.entries(byAge).map(([ageGroup, ageRecords]) => {
+  const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
+
+  const sortedByAge = Object.entries(byAge).sort(([a], [b]) => {
+    const aRelay = a.includes('72-99'), bRelay = b.includes('72-99');
+    if (aRelay && !bRelay) return 1;
+    if (!aRelay && bRelay) return -1;
+    const aPlus = a.includes('+'), bPlus = b.includes('+');
+    if (aPlus && !bPlus) return 1;
+    if (!aPlus && bPlus) return -1;
+    return getAge(a) - getAge(b);
+  });
+
+  const html = sortedByAge.map(([ageGroup, ageRecords]) => {
 
     // Group by event within each age group
     const byEvent = {};
@@ -285,12 +297,15 @@ function setFilterOptions(records) {
   const ageGroups = [...new Set(records.map(r => r.ageGroup).filter(Boolean))]
     .sort((a, b) => {
       const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
-      const aOpen = a.includes('72-99'), bOpen = b.includes('72-99');
-      if (aOpen && !bOpen) return 1;
-      if (!aOpen && bOpen) return -1;
+      // 72-99 (combined relay) always last
+      const aRelay = a.includes('72-99'), bRelay = b.includes('72-99');
+      if (aRelay && !bRelay) return 1;
+      if (!aRelay && bRelay) return -1;
+      // All + groups after all standard ranges
       const aPlus = a.includes('+'), bPlus = b.includes('+');
       if (aPlus && !bPlus) return 1;
       if (!aPlus && bPlus) return -1;
+      // Within same type, sort by starting age
       return getAge(a) - getAge(b);
     });
 
