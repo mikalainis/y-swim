@@ -71,7 +71,14 @@ This project is hosted on Firebase. To update the live site:
 2. **Deploy** using the Firebase CLI:
 
 ```bash
-firebase deploy --project scym-pentathlon-records-2025
+firebase deploy --project pentathlon-records
+# Make changes
+CI/CD Automation
+
+git add .
+git commit -m "Update records"
+git push
+# Done — Firebase deploys automatically in ~60 seconds
 
 ```
 
