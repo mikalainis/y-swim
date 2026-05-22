@@ -46,25 +46,17 @@ function parseCsv(text) {
       const cells = [];
       let current = '';
       let inQuotes = false;
-
       for (let i = 0; i < line.length; i += 1) {
         const char = line[i];
         if (inQuotes) {
           if (char === '"') {
-            if (line[i + 1] === '"') {
-              current += '"';
-              i += 1;
-            } else {
-              inQuotes = false;
-            }
-          } else {
-            current += char;
-          }
+            if (line[i + 1] === '"') { current += '"'; i += 1; }
+            else { inQuotes = false; }
+          } else { current += char; }
         } else if (char === '"') {
           inQuotes = true;
         } else if (char === ',') {
-          cells.push(current);
-          current = '';
+          cells.push(current); current = '';
         } else {
           current += char;
         }
@@ -83,69 +75,57 @@ function buildRecords(rows) {
       return acc;
     }, {});
 
-    // FIX 1: Event Name is prioritized first in lookup
-    const rawEvent = getColumnValue(values, ['Event Name', 'Event', 'event', 'Record', 'Description', 'Race']);
-    const rawTime  = getColumnValue(values, ['Time', 'time', 'Result', 'Results', 'Performance', 'Mark']);
-    const rawName  = getColumnValue(values, ['Name', 'name', 'Swimmer', 'Athlete', 'Record Holder', 'Competitor']);
-    const rawAge   = getColumnValue(values, ['Age Group', 'Age', 'Category', 'Age Group/Category']);
+    const rawEvent  = getColumnValue(values, ['Event Name', 'Event', 'event', 'Record', 'Description', 'Race']);
+    const rawTime   = getColumnValue(values, ['Time', 'time', 'Result', 'Results', 'Performance', 'Mark']);
+    const rawName   = getColumnValue(values, ['Name', 'name', 'Swimmer', 'Athlete', 'Record Holder', 'Competitor']);
+    const rawAge    = getColumnValue(values, ['Age Group', 'Age', 'Category', 'Age Group/Category']);
     const rawGender = getColumnValue(values, ['Gender', 'Sex', 'M/F']);
 
-    const ageGroup = rawAge || parseAgeGroup(rawEvent);
+    const ageGroup = rawAge  || parseAgeGroup(rawEvent);
     const gender   = rawGender || parseGender(rawEvent);
-    const event    = rawEvent || buildFallbackEvent(values);
-    const name     = rawName || buildFallbackName(values, event);
+    const event    = rawEvent  || buildFallbackEvent(values);
+    const name     = rawName   || buildFallbackName(values, event);
 
     const details = Object.entries(values)
       .filter(([key, value]) => {
         const lower = key.toLowerCase();
-        return value && !['event', 'event name', 'time', 'result', 'results', 'performance', 'mark', 'name', 'swimmer', 'athlete', 'record', 'age group', 'age', 'category', 'gender', 'sex', 'm/f', 'date', 'club'].includes(lower);
+        return value && !['event', 'event name', 'time', 'result', 'results', 'performance',
+          'mark', 'name', 'swimmer', 'athlete', 'record', 'age group', 'age', 'category',
+          'gender', 'sex', 'm/f', 'date', 'club'].includes(lower);
       })
       .map(([key, value]) => `${key}: ${value}`)
       .join(' • ');
 
-    return {
-      ageGroup,
-      event,
-      time:   rawTime || '',
-      name,
-      gender,
-      details,
-      source: values   // raw row — used to pull Date and Club directly
-    };
+    return { ageGroup, event, time: rawTime || '', name, gender, details, source: values };
   });
 }
 
 function parseGender(text) {
   const match = normalizeText(text).match(/\b(Women|Men|Mixed|W|M|X)\b/i);
   if (!match) return 'All';
-  const normalized = match[1].toLowerCase();
-  if (normalized === 'w') return 'Women';
-  if (normalized === 'm') return 'Men';
-  if (normalized === 'x') return 'Mixed';
-  return normalized === 'women' || normalized === 'men' || normalized === 'mixed'
-    ? capitalize(normalized)
-    : 'All';
+  const n = match[1].toLowerCase();
+  if (n === 'w') return 'Women';
+  if (n === 'm') return 'Men';
+  if (n === 'x') return 'Mixed';
+  return (n === 'women' || n === 'men' || n === 'mixed') ? capitalize(n) : 'All';
 }
 
 function parseAgeGroup(text) {
-  const trimmed = normalizeText(text);
-  const match = trimmed.match(/\b(Women|Men|Mixed|W|M|X)\b\s*([0-9]{1,2}-[0-9]{1,2})?/i);
+  const match = normalizeText(text).match(/\b(Women|Men|Mixed|W|M|X)\b\s*([0-9]{1,2}-[0-9]{1,2})?/i);
   if (!match) return '';
-  const gender = parseGender(match[1]);
+  const gender   = parseGender(match[1]);
   const ageRange = match[2] ? ` ${match[2]}` : '';
   return `${gender}${ageRange}`.trim();
 }
 
 function buildFallbackEvent(values) {
   const raw = getColumnValue(values, ['Record', 'Description', 'Event Name', 'Event', 'Race']);
-  if (!raw) return '';
-  return raw.replace(/^#\d+\s*/i, '');
+  return raw ? raw.replace(/^#\d+\s*/i, '') : '';
 }
 
 function buildFallbackName(values, event) {
   const candidate = getColumnValue(values, ['Record Holder', 'Swimmer', 'Athlete', 'Name', 'Competitor', 'Club', 'Team']);
-  if (candidate) return candidate;
-  return event;
+  return candidate || event;
 }
 
 function capitalize(value) {
@@ -155,12 +135,18 @@ function capitalize(value) {
 async function fetchSheetData(sheetGid) {
   const url = `${PUBLISHED_BASE}/pub?output=csv&gid=${encodeURIComponent(sheetGid)}`;
   const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Unable to load sheet data: ${response.status} ${response.statusText}`);
-  }
+  if (!response.ok) throw new Error(`Unable to load sheet data: ${response.status} ${response.statusText}`);
   const text = await response.text();
-  const table = parseCsv(text);
-  return buildRecords(table);
+  return buildRecords(parseCsv(text));
+}
+
+// ── Swimmer / Club HTML helpers ───────────────────────────────────────────────
+function swimmerHtml(name, club) {
+  const nameSpan = `<span style="display:block;font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">${escapeHtml(name)}</span>`;
+  const clubSpan = club
+    ? `<span style="display:block;font-family:'Roboto Mono',monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">${escapeHtml(club)}</span>`
+    : '';
+  return nameSpan + clubSpan;
 }
 
 function renderTable(records) {
@@ -174,25 +160,21 @@ function renderTable(records) {
 
   // Group by Age Group
   const byAge = {};
-  records.forEach(record => {
-    const age = record.ageGroup || 'Unknown';
+  records.forEach(r => {
+    const age = r.ageGroup || 'Unknown';
     if (!byAge[age]) byAge[age] = [];
-    byAge[age].push(record);
+    byAge[age].push(r);
   });
 
   const html = Object.entries(byAge).map(([ageGroup, ageRecords]) => {
 
-    // Within each age group, group by event name
+    // Group by event within each age group
     const byEvent = {};
-    ageRecords.forEach(record => {
-      const evt = record.event || 'Unknown';
+    ageRecords.forEach(r => {
+      const evt = r.event || 'Unknown';
       if (!byEvent[evt]) byEvent[evt] = { women: null, other: null };
-      const g = (record.gender || '').toLowerCase();
-      if (g === 'women') {
-        byEvent[evt].women = record;
-      } else {
-        byEvent[evt].other = record;
-      }
+      if ((r.gender || '').toLowerCase() === 'women') byEvent[evt].women = r;
+      else byEvent[evt].other = r;
     });
 
     const rows = Object.entries(byEvent).map(([event, sides]) => {
@@ -200,13 +182,11 @@ function renderTable(records) {
       const m = sides.other;
       const empty = '<span class="text-slate-300">—</span>';
 
-      // FIX 2: Read Date and Club directly from source columns
       const wDate = w ? escapeHtml(w.source['Date'] || '') : '';
-      const wName = w ? escapeHtml(w.name + (w.source['Club'] ? ' · ' + w.source['Club'] : '')) : '';
+      const wName = w ? swimmerHtml(w.name, w.source['Club']) : '';
       const wTime = w ? escapeHtml(w.time) : '';
-
       const mTime = m ? escapeHtml(m.time) : '';
-      const mName = m ? escapeHtml(m.name + (m.source['Club'] ? ' · ' + m.source['Club'] : '')) : '';
+      const mName = m ? swimmerHtml(m.name, m.source['Club']) : '';
       const mDate = m ? escapeHtml(m.source['Date'] || '') : '';
 
       return `
@@ -218,15 +198,14 @@ function renderTable(records) {
           <td class="px-3 py-3 time-cell border-l-2 border-blue-100">${mTime || (m ? '' : empty)}</td>
           <td class="px-3 py-3">${mName || (m ? '' : empty)}</td>
           <td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">${mDate || (m ? '' : empty)}</td>
-        </tr>
-      `;
+        </tr>`;
     }).join('');
+
+    const ageLabel = ageGroup.replace(/^(Men|Women|Mixed)\s*/i, '');
 
     return `
       <div class="mb-10">
-        <div class="age-group-banner">
-          🏊 Age Group: ${escapeHtml(ageGroup.replace(/^(Men|Women|Mixed)\s*/i, ''))}
-        </div>
+        <div class="age-group-banner">🏊 Age Group: ${escapeHtml(ageLabel)}</div>
         <div class="table-wrapper">
           <table class="min-w-full text-left">
             <thead>
@@ -245,23 +224,19 @@ function renderTable(records) {
                 <th class="sub-header">Date</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 bg-white">
-              ${rows}
-            </tbody>
+            <tbody class="divide-y divide-slate-100 bg-white">${rows}</tbody>
           </table>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 
   container.innerHTML = html;
 }
 
 function escapeHtml(value) {
-  return String(value || '').replace(/[&<>"]+/g, (match) => {
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
-    return map[match] || match;
-  });
+  return String(value || '').replace(/[&<>"]+/g, m =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m] || m)
+  );
 }
 
 function setFilterOptions(records) {
@@ -269,27 +244,20 @@ function setFilterOptions(records) {
   const eventFilter  = getElement(ELEMENT_IDS.eventFilter);
   const genderFilter = getElement(ELEMENT_IDS.genderFilter);
   const clubFilter   = getElement(ELEMENT_IDS.clubFilter);
-
   if (!ageFilter || !eventFilter || !genderFilter) return;
 
-  const ageGroups = [...new Set(records.map((r) => r.ageGroup).filter(Boolean))]
+  const ageGroups = [...new Set(records.map(r => r.ageGroup).filter(Boolean))]
     .sort((a, b) => {
-      // Extract the starting age number from strings like "18-24", "Men 30-34", "75+"
-      const getStartAge = (str) => {
-        const match = str.match(/(\d+)/);
-        return match ? parseInt(match[1], 10) : 9999;
-      };
-      const aPlus = a.includes('+');
-      const bPlus = b.includes('+');
-      // Push all + groups to the end
+      const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
+      const aPlus = a.includes('+'), bPlus = b.includes('+');
       if (aPlus && !bPlus) return 1;
       if (!aPlus && bPlus) return -1;
-      // Sort by starting age number
-      return getStartAge(a) - getStartAge(b);
+      return getAge(a) - getAge(b);
     });
-  const events    = [...new Set(records.map((r) => r.event).filter(Boolean))].sort();
-  const genders   = [...new Set(records.map((r) => r.gender).filter(Boolean))].sort();
-  const clubs     = [...new Set(records.map((r) => r.source['Club']).filter(Boolean))].sort();
+
+  const events  = [...new Set(records.map(r => r.event).filter(Boolean))].sort();
+  const genders = [...new Set(records.map(r => r.gender).filter(Boolean))].sort();
+  const clubs   = [...new Set(records.map(r => r.source['Club']).filter(Boolean))].sort();
 
   fillSelectOptions(ageFilter,    ageGroups, 'All Age Groups');
   fillSelectOptions(eventFilter,  events,    'All Events');
@@ -300,21 +268,15 @@ function setFilterOptions(records) {
 function fillSelectOptions(select, options, defaultLabel) {
   const current = select.value || 'all';
   select.innerHTML = '';
-  const defaultOption = document.createElement('option');
-  defaultOption.value = 'all';
-  defaultOption.textContent = defaultLabel;
-  select.appendChild(defaultOption);
-
-  options.forEach((option) => {
-    const optionElement = document.createElement('option');
-    optionElement.value = option;
-    optionElement.textContent = option;
-    select.appendChild(optionElement);
+  const def = document.createElement('option');
+  def.value = 'all'; def.textContent = defaultLabel;
+  select.appendChild(def);
+  options.forEach(opt => {
+    const el = document.createElement('option');
+    el.value = opt; el.textContent = opt;
+    select.appendChild(el);
   });
-
-  if ([...select.options].some((o) => o.value === current)) {
-    select.value = current;
-  }
+  if ([...select.options].some(o => o.value === current)) select.value = current;
 }
 
 function applyFilters(records) {
@@ -323,29 +285,27 @@ function applyFilters(records) {
   const genderFilter = getElement(ELEMENT_IDS.genderFilter);
   const clubFilter   = getElement(ELEMENT_IDS.clubFilter);
   const nameFilter   = getElement(ELEMENT_IDS.nameFilter);
-
   if (!ageFilter || !eventFilter || !genderFilter || !nameFilter) return records;
 
-  const ageValue    = ageFilter.value;
-  const eventValue  = eventFilter.value;
-  const genderValue = genderFilter.value;
-  const clubValue   = clubFilter ? clubFilter.value : 'all';
-  const nameValue   = normalizeText(nameFilter.value).toLowerCase();
+  const ageVal    = ageFilter.value;
+  const eventVal  = eventFilter.value;
+  const genderVal = genderFilter.value;
+  const clubVal   = clubFilter ? clubFilter.value : 'all';
+  const nameVal   = normalizeText(nameFilter.value).toLowerCase();
 
-  return records.filter((record) => {
-    if (ageValue    !== 'all' && record.ageGroup          !== ageValue)    return false;
-    if (eventValue  !== 'all' && record.event             !== eventValue)  return false;
-    if (genderValue !== 'all' && record.gender            !== genderValue) return false;
-    if (clubValue   !== 'all' && record.source['Club']    !== clubValue)   return false;
-    if (nameValue && !`${record.name} ${record.event} ${record.details}`.toLowerCase().includes(nameValue)) return false;
+  return records.filter(r => {
+    if (ageVal    !== 'all' && r.ageGroup       !== ageVal)    return false;
+    if (eventVal  !== 'all' && r.event          !== eventVal)  return false;
+    if (genderVal !== 'all' && r.gender         !== genderVal) return false;
+    if (clubVal   !== 'all' && r.source['Club'] !== clubVal)   return false;
+    if (nameVal && !`${r.name} ${r.event} ${r.details}`.toLowerCase().includes(nameVal)) return false;
     return true;
   });
 }
 
 function showMessage(message) {
   const container = getElement(ELEMENT_IDS.recordsContainer);
-  if (!container) return;
-  container.innerHTML = `<div class="text-center text-slate-500 py-12">${escapeHtml(message)}</div>`;
+  if (container) container.innerHTML = `<div class="text-center text-slate-500 py-12">${escapeHtml(message)}</div>`;
 }
 
 function updateSheetMeta(message) {
@@ -355,19 +315,11 @@ function updateSheetMeta(message) {
 
 function updateHeaderDate(date) {
   const el = getElement('header-date');
-  if (!el) return;
-  el.textContent = `Records as of ${date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
+  if (el) el.textContent = `Records as of ${date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
 }
 
 function formatTimestamp(date) {
-  return date.toLocaleString(undefined, {
-    year:   'numeric',
-    month:  'short',
-    day:    'numeric',
-    hour:   'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
+  return date.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
 function setupEventListeners(baseRecords) {
@@ -379,11 +331,7 @@ function setupEventListeners(baseRecords) {
   const clearButton  = getElement(ELEMENT_IDS.clearFilters);
 
   const update = () => renderTable(applyFilters(baseRecords));
-
-  [ageFilter, eventFilter, genderFilter, clubFilter].forEach((select) => {
-    if (select) select.addEventListener('change', update);
-  });
-
+  [ageFilter, eventFilter, genderFilter, clubFilter].forEach(s => { if (s) s.addEventListener('change', update); });
   if (nameFilter) nameFilter.addEventListener('input', update);
 
   if (clearButton) {
@@ -402,7 +350,6 @@ async function init() {
   const sheetGid = getSheetGid();
   showMessage('Loading records data...');
   updateSheetMeta('Fetching live sheet data...');
-
   try {
     const records = await fetchSheetData(sheetGid);
     if (!records.length) {
@@ -410,7 +357,6 @@ async function init() {
       updateSheetMeta('Live sheet loaded, but no records were returned.');
       return;
     }
-
     setFilterOptions(records);
     setupEventListeners(records);
     renderTable(records);
