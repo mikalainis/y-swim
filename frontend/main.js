@@ -20,7 +20,6 @@ function getSheetGid() {
 }
 
 function getElement(id) { return document.getElementById(id); }
-
 function normalizeText(value) { return String(value ?? '').trim(); }
 
 function getColumnValue(row, keys) {
@@ -34,32 +33,20 @@ function getColumnValue(row, keys) {
 }
 
 function parseCsv(text) {
-  return text
-    .replace(/\r\n/g, '\n')
-    .split('\n')
-    .filter(line => line.trim() !== '')
-    .map(line => {
-      const cells = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (inQuotes) {
-          if (char === '"') {
-            if (line[i + 1] === '"') { current += '"'; i++; }
-            else { inQuotes = false; }
-          } else { current += char; }
-        } else if (char === '"') {
-          inQuotes = true;
-        } else if (char === ',') {
-          cells.push(current); current = '';
-        } else {
-          current += char;
-        }
-      }
-      cells.push(current);
-      return cells;
-    });
+  return text.replace(/\r\n/g, '\n').split('\n').filter(line => line.trim() !== '').map(line => {
+    const cells = []; let current = ''; let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (inQuotes) {
+        if (char === '"') { if (line[i+1] === '"') { current += '"'; i++; } else { inQuotes = false; } }
+        else { current += char; }
+      } else if (char === '"') { inQuotes = true; }
+      else if (char === ',') { cells.push(current); current = ''; }
+      else { current += char; }
+    }
+    cells.push(current);
+    return cells;
+  });
 }
 
 function buildRecords(rows) {
@@ -70,28 +57,23 @@ function buildRecords(rows) {
       acc[header] = normalizeText(row[index] ?? '');
       return acc;
     }, {});
-
     const rawEvent  = getColumnValue(values, ['Event Name', 'Event', 'event', 'Record', 'Description', 'Race']);
     const rawTime   = getColumnValue(values, ['Time', 'time', 'Result', 'Results', 'Performance', 'Mark']);
     const rawName   = getColumnValue(values, ['Name', 'name', 'Swimmer', 'Athlete', 'Record Holder', 'Competitor']);
     const rawAge    = getColumnValue(values, ['Age Group', 'Age', 'Category', 'Age Group/Category']);
     const rawGender = getColumnValue(values, ['Gender', 'Sex', 'M/F']);
-
-    const ageGroup = rawAge    || parseAgeGroup(rawEvent);
-    const gender   = rawGender || parseGender(rawEvent);
-    const event    = rawEvent  || buildFallbackEvent(values);
-    const name     = rawName   || buildFallbackName(values, event);
-
-    const details = Object.entries(values)
+    const ageGroup  = rawAge    || parseAgeGroup(rawEvent);
+    const gender    = rawGender || parseGender(rawEvent);
+    const event     = rawEvent  || buildFallbackEvent(values);
+    const name      = rawName   || buildFallbackName(values, event);
+    const details   = Object.entries(values)
       .filter(([key, value]) => {
         const lower = key.toLowerCase();
-        return value && !['event', 'event name', 'time', 'result', 'results', 'performance',
-          'mark', 'name', 'swimmer', 'athlete', 'record', 'age group', 'age', 'category',
-          'gender', 'sex', 'm/f', 'date', 'club'].includes(lower);
+        return value && !['event','event name','time','result','results','performance','mark',
+          'name','swimmer','athlete','record','age group','age','category','gender','sex',
+          'm/f','date','club'].includes(lower);
       })
-      .map(([key, value]) => `${key}: ${value}`)
-      .join(' • ');
-
+      .map(([key, value]) => key + ': ' + value).join(' • ');
     return { ageGroup, event, time: rawTime || '', name, gender, details, source: values };
   });
 }
@@ -109,9 +91,9 @@ function parseGender(text) {
 function parseAgeGroup(text) {
   const match = normalizeText(text).match(/\b(Women|Men|Mixed|W|M|X)\b\s*([0-9]{1,2}-[0-9]{1,2})?/i);
   if (!match) return '';
-  const gender   = parseGender(match[1]);
-  const ageRange = match[2] ? ` ${match[2]}` : '';
-  return `${gender}${ageRange}`.trim();
+  const gender = parseGender(match[1]);
+  const ageRange = match[2] ? ' ' + match[2] : '';
+  return (gender + ageRange).trim();
 }
 
 function buildFallbackEvent(values) {
@@ -129,9 +111,9 @@ function capitalize(value) {
 }
 
 async function fetchSheetData(sheetGid) {
-  const url = `${PUBLISHED_BASE}/pub?output=csv&gid=${encodeURIComponent(sheetGid)}`;
+  const url = PUBLISHED_BASE + '/pub?output=csv&gid=' + encodeURIComponent(sheetGid);
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`Unable to load sheet data: ${response.status} ${response.statusText}`);
+  if (!response.ok) throw new Error('Unable to load sheet data: ' + response.status + ' ' + response.statusText);
   const text = await response.text();
   return buildRecords(parseCsv(text));
 }
@@ -155,27 +137,22 @@ function getDistance(eventStr) {
 }
 
 function sortEvents(entries) {
-  return entries.sort(([a], [b]) => {
-    const strokeDiff = getStrokeRank(a) - getStrokeRank(b);
-    if (strokeDiff !== 0) return strokeDiff;
-    return getDistance(a) - getDistance(b);
+  return entries.slice().sort(([a], [b]) => {
+    const d = getStrokeRank(a) - getStrokeRank(b);
+    return d !== 0 ? d : getDistance(a) - getDistance(b);
   });
 }
 
 // ── Swimmer / Club HTML ───────────────────────────────────────────────────────
 function swimmerHtml(name, club) {
-  const nameSpan = '<span style="display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">' + escapeHtml(name) + '</span>';
-  const clubSpan = club
-    ? '<span style="display:block;font-family:Roboto Mono,monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">' + escapeHtml(club) + '</span>'
-    : '';
-  return nameSpan + clubSpan;
+  return '<span style="display:block;font-family:Montserrat,sans-serif;font-weight:800;font-size:1rem;color:#0c4a6e;letter-spacing:0.01em;">' + escapeHtml(name) + '</span>'
+    + (club ? '<span style="display:block;font-family:Roboto Mono,monospace;font-size:0.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">' + escapeHtml(club) + '</span>' : '');
 }
 
 // ── Render table ──────────────────────────────────────────────────────────────
 function renderTable(records) {
   const container = getElement(ELEMENT_IDS.recordsContainer);
   if (!container) return;
-
   if (!records.length) {
     container.innerHTML = '<div class="text-center text-slate-500 py-12">No records available for the selected filters.</div>';
     return;
@@ -189,8 +166,8 @@ function renderTable(records) {
     byAge[age].push(r);
   });
 
+  // Sort age groups
   const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
-
   const sortedByAge = Object.entries(byAge).sort(([a], [b]) => {
     const aRelay = a.includes('72-99'), bRelay = b.includes('72-99');
     if (aRelay && !bRelay) return 1;
@@ -203,80 +180,111 @@ function renderTable(records) {
 
   const html = sortedByAge.map(([ageGroup, ageRecords]) => {
 
-    // Group by event within each age group — three buckets: women, men, mixed
+    // Group by event — three buckets
     const byEvent = {};
     ageRecords.forEach(r => {
       const evt = r.event || 'Unknown';
       if (!byEvent[evt]) byEvent[evt] = { women: null, men: null, mixed: null };
       const g = (r.gender || '').toLowerCase();
-      if (g === 'women') byEvent[evt].women = r;
+      if (g === 'women')      byEvent[evt].women = r;
       else if (g === 'mixed') byEvent[evt].mixed = r;
-      else byEvent[evt].men = r;
+      else                    byEvent[evt].men   = r;
     });
 
-    // Determine right column label from actual data in this age group
-    const hasMixed = Object.values(byEvent).some(s => s.mixed !== null);
-    const hasMen   = Object.values(byEvent).some(s => s.men !== null);
-    const rightLabel  = hasMixed && !hasMen ? 'MIXED' : hasMixed ? 'MEN / MIXED' : 'MEN';
-    const rightSymbol = hasMixed && !hasMen ? '⚡' : hasMixed ? '⚡♂' : '♂';
-    const rightThClass = (hasMixed && !hasMen) ? '' : 'gender-header-men';
-    const rightThStyle = (hasMixed && !hasMen)
-      ? 'background:linear-gradient(90deg,#faf5ff,#ede9fe);color:#6b21a8;font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-align:center;border-left:2px solid #ddd6fe;padding:0.5rem 0.75rem;'
-      : '';
+    // Separate regular vs mixed-only
+    const regularEvents = Object.entries(byEvent).filter(([, s]) => s.women !== null || s.men !== null);
+    const mixedEvents   = Object.entries(byEvent).filter(([, s]) => s.mixed !== null);
 
-    // Sort events in publication order
-    const sortedEvents = sortEvents(Object.entries(byEvent));
+    // Determine layout — mirrored only when BOTH Women and Men exist
+    const hasWomen = regularEvents.some(([, s]) => s.women !== null);
+    const hasMen   = regularEvents.some(([, s]) => s.men   !== null);
+    const mirrored = hasWomen && hasMen;
+    const empty    = '<span class="text-slate-300">—</span>';
 
-    const rows = sortedEvents.map(([event, sides]) => {
+    // Regular rows
+    const regularRows = sortEvents(regularEvents).map(([event, sides]) => {
       const w = sides.women;
-      const m = sides.men || sides.mixed; // prefer men, fall back to mixed
-      const empty = '<span class="text-slate-300">—</span>';
-
-      const wDate = w ? escapeHtml(w.source['Date'] || '') : '';
-      const wName = w ? swimmerHtml(w.name, w.source['Club']) : '';
-      const wTime = w ? escapeHtml(w.time) : '';
-      const mTime = m ? escapeHtml(m.time) : '';
-      const mName = m ? swimmerHtml(m.name, m.source['Club']) : '';
-      const mDate = m ? escapeHtml(m.source['Date'] || '') : '';
-
-      return '<tr class="record-row border-b border-slate-100">'
-        + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (wDate || (w ? '' : empty)) + '</td>'
-        + '<td class="px-3 py-3">' + (wName || (w ? '' : empty)) + '</td>'
-        + '<td class="px-3 py-3 time-cell text-right border-r-2 border-pink-100">' + (wTime || (w ? '' : empty)) + '</td>'
-        + '<td class="event-cell">' + escapeHtml(event) + '</td>'
-        + '<td class="px-3 py-3 time-cell border-l-2 border-blue-100">' + (mTime || (m ? '' : empty)) + '</td>'
-        + '<td class="px-3 py-3">' + (mName || (m ? '' : empty)) + '</td>'
-        + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (mDate || (m ? '' : empty)) + '</td>'
-        + '</tr>';
+      const m = sides.men;
+      if (mirrored) {
+        return '<tr class="record-row border-b border-slate-100">'
+          + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (w ? escapeHtml(w.source['Date'] || '') : empty) + '</td>'
+          + '<td class="px-3 py-3">'                                           + (w ? swimmerHtml(w.name, w.source['Club']) : empty) + '</td>'
+          + '<td class="px-3 py-3 time-cell text-right border-r-2 border-pink-100">' + (w ? escapeHtml(w.time) : empty) + '</td>'
+          + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+          + '<td class="px-3 py-3 time-cell border-l-2 border-blue-100">'     + (m ? escapeHtml(m.time) : empty) + '</td>'
+          + '<td class="px-3 py-3">'                                           + (m ? swimmerHtml(m.name, m.source['Club']) : empty) + '</td>'
+          + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (m ? escapeHtml(m.source['Date'] || '') : empty) + '</td>'
+          + '</tr>';
+      } else {
+        const rec = w || m;
+        return '<tr class="record-row border-b border-slate-100">'
+          + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+          + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (rec ? escapeHtml(rec.source['Date'] || '') : empty) + '</td>'
+          + '<td class="px-3 py-3">'                                           + (rec ? swimmerHtml(rec.name, rec.source['Club']) : empty) + '</td>'
+          + '<td class="px-3 py-3 time-cell">'                                 + (rec ? escapeHtml(rec.time) : empty) + '</td>'
+          + '</tr>';
+      }
     }).join('');
 
-    // Strip gender prefix from age label e.g. "Men 18-24" → "18-24"
+    // Mixed rows at the bottom — always single format: EVENT | Date | Name | Time
+    const mixedCols = mirrored ? 7 : 4;
+    const mixedHeaderRow = regularEvents.length
+      ? '<tr><td colspan="' + mixedCols + '" class="px-3 pt-6 pb-1" style="text-align:center;">'
+          + '<div style="display:inline-block;background:linear-gradient(90deg,#faf5ff,#ede9fe);color:#6b21a8;font-family:Montserrat,sans-serif;font-size:0.72rem;font-weight:800;letter-spacing:0.12em;padding:0.4rem 0.75rem;border-radius:0.25rem;">⚡ MIXED</div>'
+          + '</td></tr>'
+      : ''; // no divider needed if mixed is the only gender
+    const mixedRows = mixedEvents.length
+      ? mixedHeaderRow
+        + sortEvents(mixedEvents).map(([event, sides]) => {
+            const mx = sides.mixed;
+            return '<tr class="record-row border-b border-slate-100">'
+              + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+              + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (mx ? escapeHtml(mx.source['Date'] || '') : empty) + '</td>'
+              + '<td class="px-3 py-3">'                                           + (mx ? swimmerHtml(mx.name, mx.source['Club']) : empty) + '</td>'
+              + '<td class="px-3 py-3 time-cell">'                                 + (mx ? escapeHtml(mx.time) : empty) + '</td>'
+              + (mirrored ? '<td colspan="3"></td>' : '')
+              + '</tr>';
+          }).join('')
+      : '';
+
     const ageLabel = ageGroup.replace(/^(Men|Women|Mixed)\s*/i, '');
+
+    const hasMixed = mixedEvents.length > 0;
+
+    // Headers — mirrored or single
+    const thead1 = mirrored
+      ? '<tr>'
+        + '<th colspan="3" class="gender-header-women">♀ WOMEN</th>'
+        + '<th class="gender-header-spacer px-3 py-2"></th>'
+        + '<th colspan="3" class="gender-header-men">♂ MEN</th>'
+        + '</tr>'
+      : '<tr>'
+        + (hasWomen ? '<th colspan="4" class="gender-header-women">♀ WOMEN</th>' : '')
+        + (hasMen   ? '<th colspan="4" class="gender-header-men">♂ MEN</th>' : '')
+        + (!hasWomen && !hasMen && hasMixed
+          ? '<th colspan="4" style="background:linear-gradient(90deg,#faf5ff,#ede9fe);color:#6b21a8;font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-align:center;padding:0.5rem 0.75rem;">⚡ MIXED</th>'
+          : '')
+        + '</tr>';
+
+    const thead2 = mirrored
+      ? '<tr>'
+        + '<th class="sub-header">Date</th><th class="sub-header">Swimmer / Club</th><th class="sub-header text-right border-r-2 border-pink-200">Time</th>'
+        + '<th class="sub-header-event">Event</th>'
+        + '<th class="sub-header border-l-2 border-blue-200">Time</th><th class="sub-header">Swimmer / Club</th><th class="sub-header">Date</th>'
+        + '</tr>'
+      : '<tr>'
+        + '<th class="sub-header-event">Event</th>'
+        + '<th class="sub-header">Date</th>'
+        + '<th class="sub-header">Swimmer / Club</th>'
+        + '<th class="sub-header">Time</th>'
+        + '</tr>';
 
     return '<div class="mb-10">'
       + '<div class="age-group-banner">🏊 Age Group: ' + escapeHtml(ageLabel) + '</div>'
-      + '<div class="table-wrapper">'
-      + '<table class="min-w-full text-left">'
-      + '<thead>'
-      + '<tr>'
-      + '<th colspan="3" class="gender-header-women">♀ WOMEN</th>'
-      + '<th class="gender-header-spacer px-3 py-2"></th>'
-      + '<th colspan="3" class="' + rightThClass + '" style="' + rightThStyle + '">' + rightSymbol + ' ' + rightLabel + '</th>'
-      + '</tr>'
-      + '<tr>'
-      + '<th class="sub-header">Date</th>'
-      + '<th class="sub-header">Swimmer / Club</th>'
-      + '<th class="sub-header text-right border-r-2 border-pink-200">Time</th>'
-      + '<th class="sub-header-event">Event</th>'
-      + '<th class="sub-header border-l-2 border-blue-200">Time</th>'
-      + '<th class="sub-header">Swimmer / Club</th>'
-      + '<th class="sub-header">Date</th>'
-      + '</tr>'
-      + '</thead>'
-      + '<tbody class="divide-y divide-slate-100 bg-white">' + rows + '</tbody>'
-      + '</table>'
-      + '</div>'
-      + '</div>';
+      + '<div class="table-wrapper"><table class="min-w-full text-left">'
+      + '<thead>' + thead1 + thead2 + '</thead>'
+      + '<tbody class="divide-y divide-slate-100 bg-white">' + regularRows + mixedRows + '</tbody>'
+      + '</table></div></div>';
   }).join('');
 
   container.innerHTML = html;
@@ -288,6 +296,7 @@ function escapeHtml(value) {
   );
 }
 
+// ── Filter options ────────────────────────────────────────────────────────────
 function setFilterOptions(records) {
   const ageFilter    = getElement(ELEMENT_IDS.ageFilter);
   const eventFilter  = getElement(ELEMENT_IDS.eventFilter);
@@ -295,30 +304,27 @@ function setFilterOptions(records) {
   const clubFilter   = getElement(ELEMENT_IDS.clubFilter);
   if (!ageFilter || !eventFilter || !genderFilter) return;
 
-  const ageGroups = [...new Set(records.map(r => r.ageGroup).filter(Boolean))]
-    .sort((a, b) => {
-      const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
-      // 72-99 (combined relay) always last
-      const aRelay = a.includes('72-99'), bRelay = b.includes('72-99');
-      if (aRelay && !bRelay) return 1;
-      if (!aRelay && bRelay) return -1;
-      // All + groups after all standard ranges
-      const aPlus = a.includes('+'), bPlus = b.includes('+');
-      if (aPlus && !bPlus) return 1;
-      if (!aPlus && bPlus) return -1;
-      // Within same type, sort by starting age
-      return getAge(a) - getAge(b);
-    });
+  const getAge = s => { const m = s.match(/(\d+)/); return m ? parseInt(m[1], 10) : 9999; };
+  const ageGroups = [...new Set(records.map(r => r.ageGroup).filter(Boolean))].sort((a, b) => {
+    const aRelay = a.includes('72-99'), bRelay = b.includes('72-99');
+    if (aRelay && !bRelay) return 1;
+    if (!aRelay && bRelay) return -1;
+    const aPlus = a.includes('+'), bPlus = b.includes('+');
+    if (aPlus && !bPlus) return 1;
+    if (!aPlus && bPlus) return -1;
+    return getAge(a) - getAge(b);
+  });
 
-  const events = [...new Set(records.map(r => r.event).filter(Boolean))]
-    .sort((a, b) => {
-      const strokeDiff = getStrokeRank(a) - getStrokeRank(b);
-      if (strokeDiff !== 0) return strokeDiff;
-      return getDistance(a) - getDistance(b);
-    });
+  const events = [...new Set(records.map(r => r.event).filter(Boolean))].sort((a, b) => {
+    const d = getStrokeRank(a) - getStrokeRank(b);
+    return d !== 0 ? d : getDistance(a) - getDistance(b);
+  });
 
-  const genders = [...new Set(records.map(r => r.gender).filter(Boolean))].sort();
-  const clubs   = [...new Set(records.map(r => r.source['Club']).filter(Boolean))].sort();
+  const GENDER_ORDER = ['Women', 'Men', 'Mixed'];
+  const rawGenders = [...new Set(records.map(r => r.gender).filter(Boolean))];
+  const genders = GENDER_ORDER.filter(g => rawGenders.includes(g));
+
+  const clubs = [...new Set(records.map(r => r.source['Club']).filter(Boolean))].sort();
 
   fillSelectOptions(ageFilter,    ageGroups, 'All Age Groups');
   fillSelectOptions(eventFilter,  events,    'All Events');
@@ -359,7 +365,7 @@ function applyFilters(records) {
     if (eventVal  !== 'all' && r.event          !== eventVal)  return false;
     if (genderVal !== 'all' && r.gender         !== genderVal) return false;
     if (clubVal   !== 'all' && r.source['Club'] !== clubVal)   return false;
-    if (nameVal && !`${r.name} ${r.event} ${r.details}`.toLowerCase().includes(nameVal)) return false;
+    if (nameVal && !(r.name + ' ' + r.event + ' ' + r.details).toLowerCase().includes(nameVal)) return false;
     return true;
   });
 }
@@ -394,7 +400,6 @@ function setupEventListeners(baseRecords) {
   const update = () => renderTable(applyFilters(baseRecords));
   [ageFilter, eventFilter, genderFilter, clubFilter].forEach(s => { if (s) s.addEventListener('change', update); });
   if (nameFilter) nameFilter.addEventListener('input', update);
-
   if (clearButton) {
     clearButton.addEventListener('click', () => {
       if (ageFilter)    ageFilter.value    = 'all';
