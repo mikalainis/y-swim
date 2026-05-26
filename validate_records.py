@@ -19,6 +19,9 @@ PUBLISHED_BASE = (
 TABS = {
     "Pentathlon Records": "1704234305",
     "Last Chance Records": "0",
+    "NJLMSC SCY Records": "1806285355",
+    "NJLMSC SCM Records": "438569775",
+    "NJLMSC LCM Records": "1603815205",
 }
 REQUIRED_COLUMNS = {"Event", "Gender", "Age Group", "Event Name", "Time", "Date", "Name", "Club"}
 
@@ -28,8 +31,26 @@ def fetch_sheet(gid):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=15) as response:
         content = response.read().decode("utf-8")
-    reader = csv.DictReader(io.StringIO(content))
-    return list(reader), reader.fieldnames
+    
+    # Use StringIO and read the raw text to handle potentially missing headers
+    # The actual column J (index 9) check will be done on the raw row list
+    raw_lines = content.strip().splitlines()
+    if not raw_lines:
+        return [], []
+    
+    header_row = next(csv.reader([raw_lines[0]]))
+    data_rows = list(csv.DictReader(io.StringIO(content)))
+    
+    # Enrich DictReader rows with raw row list for index-based access (like Column J)
+    raw_reader = csv.reader(io.StringIO(content))
+    next(raw_reader) # skip headers
+    raw_data = list(raw_reader)
+    
+    for i, row in enumerate(data_rows):
+        # Attach raw list to the dict for index-based checks (Column J is index 9)
+        row['__raw__'] = raw_data[i] if i < len(raw_data) else []
+
+    return data_rows, header_row
 
 # ── Validation ────────────────────────────────────────────────────────────────
 def validate_tab(tab_name, gid):
@@ -54,8 +75,10 @@ def validate_tab(tab_name, gid):
 
     # ── Totals ────────────────────────────────────────────────────────────────
     total = len(rows)
+    unofficial_count = sum(1 for r in rows if len(r.get('__raw__', [])) > 9 and r['__raw__'][9] == '*')
     print(f"\n📊 TOTALS")
     print(f"  Total records: {total}")
+    print(f"  Unofficial records (* in Col J): {unofficial_count}")
 
     # Gender breakdown
     gender_counts = defaultdict(int)
@@ -64,21 +87,36 @@ def validate_tab(tab_name, gid):
     for gender, count in sorted(gender_counts.items()):
         print(f"  {gender or '(blank)'}: {count}")
 
-    # ── Blank field check ─────────────────────────────────────────────────────
-    print(f"\n🔍 BLANK FIELD CHECK")
+    # ── Incomplete Record Check (Missing Time or Name) ───────────────────────
+    # This mirrors main.js filter: .filter(r => r.rawTime && r.rawName)
+    print(f"\n🔍 INCOMPLETE RECORD CHECK (Missing Time or Name)")
+    incomplete = []
+    for i, r in enumerate(rows, start=2):
+        if not r.get("Time", "").strip() or not r.get("Name", "").strip():
+            incomplete.append(f"  Row {i}: Missing {'Time' if not r.get('Time','').strip() else 'Name'} — {r.get('Event Name', 'Unknown Event')}")
+    
+    if incomplete:
+        print(f"  ⚠️  {len(incomplete)} record(s) will be HIDDEN by main.js:")
+        for issue in incomplete[:10]:
+            print(issue)
+        if len(incomplete) > 10:
+            print(f"  ... and {len(incomplete) - 10} more")
+    else:
+        print(f"  ✅ All records are complete (have Time and Name)")
+
+    # ── Blank field check (Other Fields) ──────────────────────────────────────
+    print(f"\n🔍 BLANK FIELD CHECK (Gender, Age Group, Event Name)")
     issues = []
-    for i, r in enumerate(rows, start=2):  # row 2 = first data row
-        for col in ["Gender", "Age Group", "Event Name", "Time", "Name"]:
+    for i, r in enumerate(rows, start=2):
+        for col in ["Gender", "Age Group", "Event Name"]:
             if not r.get(col, "").strip():
                 issues.append(f"  Row {i}: blank '{col}' — {dict(list(r.items())[:4])}")
     if issues:
         print(f"  ⚠️  {len(issues)} blank field(s) found:")
-        for issue in issues[:10]:  # show max 10
+        for issue in issues[:10]:
             print(issue)
-        if len(issues) > 10:
-            print(f"  ... and {len(issues) - 10} more")
     else:
-        print(f"  ✅ No blank fields found")
+        print(f"  ✅ Fields present")
 
     # ── Duplicate check ───────────────────────────────────────────────────────
     print(f"\n🔁 DUPLICATE CHECK (same Gender + Age Group + Event Name)")
@@ -98,9 +136,11 @@ def validate_tab(tab_name, gid):
     print(f"\n👥 AGE GROUP SUMMARY")
     age_gender = defaultdict(lambda: defaultdict(int))
     for r in rows:
-        age = r.get("Age Group", "").strip()
-        gender = r.get("Gender", "").strip()
-        age_gender[age][gender] += 1
+        # Only count records that are NOT hidden
+        if r.get("Time", "").strip() and r.get("Name", "").strip():
+            age = r.get("Age Group", "").strip()
+            gender = r.get("Gender", "").strip()
+            age_gender[age][gender] += 1
 
     def age_sort_key(age):
         import re
@@ -116,10 +156,11 @@ def validate_tab(tab_name, gid):
         print(f"  {age:<12} — {total_age:>3} records  ({parts})")
 
     # ── Event summary ─────────────────────────────────────────────────────────
-    print(f"\n🏊 EVENT SUMMARY")
+    print(f"\n🏊 EVENT SUMMARY (Visible Records)")
     event_counts = defaultdict(int)
     for r in rows:
-        event_counts[r.get("Event Name", "").strip()] += 1
+        if r.get("Time", "").strip() and r.get("Name", "").strip():
+            event_counts[r.get("Event Name", "").strip()] += 1
 
     def event_sort_key(e):
         lower = e.lower()
@@ -140,27 +181,18 @@ def validate_tab(tab_name, gid):
         print(f"  {event:<30} — {event_counts[event]:>3} record(s)")
 
     # ── Relay detail ──────────────────────────────────────────────────────────
-    relay_rows = [r for r in rows if "relay" in r.get("Event Name","").lower()]
+    relay_rows = [r for r in rows if "relay" in r.get("Event Name","").lower() and r.get("Time","").strip() and r.get("Name","").strip()]
     if relay_rows:
-        print(f"\n🔗 RELAY DETAIL ({len(relay_rows)} records)")
+        print(f"\n🔗 RELAY DETAIL ({len(relay_rows)} visible records)")
         for r in relay_rows:
             name = r.get("Name", "").strip()
             print(f"  {r.get('Gender',''):<7} | {r.get('Age Group',''):<8} | {r.get('Event Name',''):<22} | {r.get('Time',''):<8} | {r.get('Date',''):<12} | {name}")
-
-    # ── Missing time check ────────────────────────────────────────────────────
-    missing_times = [r for r in rows if not r.get("Time","").strip()]
-    if missing_times:
-        print(f"\n⏱️  MISSING TIMES: {len(missing_times)} record(s)")
-        for r in missing_times[:5]:
-            print(f"  {r.get('Gender','')} | {r.get('Age Group','')} | {r.get('Event Name','')} | {r.get('Name','')}")
-    else:
-        print(f"\n  ✅ All records have times")
 
     print(f"\n✅ Validation complete for {tab_name}")
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    print("🏊 Somerset County YMCA Records — Validation Report")
+    print("🏊 Somerset County YMCA & NJLMSC Records — Validation Report")
     print(f"{'='*60}")
     for tab_name, gid in TABS.items():
         validate_tab(tab_name, gid)
