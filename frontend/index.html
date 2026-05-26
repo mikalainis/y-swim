@@ -3,89 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Somerset County YMCA Records</title>
+    <title>Y-Swim Records Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .hub-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .hub-card:hover {
+            border-color: #0ea5e9;
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.1);
+            transform: translateY(-2px);
+        }
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 3rem 0;
+        }
+    </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen bg-slate-50">
 
-    <header class="site-header relative z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-0">
-            <div class="text-center mb-4">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/10 mb-3 border border-white/20">
-                    <span class="text-2xl">🏊</span>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight tracking-tight">
-                    Somerset County YMCA Records
-                </h1>
-                <p id="header-date" class="text-sky-300 text-sm font-medium mt-1">Loading date...</p>
-                <div class="mt-3 mb-5">
-                    <a href="https://www.usms.org/comp/meets/" target="_blank"
-                       class="text-sky-300 hover:text-white text-xs font-medium transition-colors underline underline-offset-2">
-                        U.S. Masters Swimming Event Results Database &rarr;
-                    </a>
-                </div>
+    <header class="site-header relative z-10 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 mb-4 border border-white/20">
+                <span class="text-3xl">🏊</span>
             </div>
-            <div class="flex justify-center gap-1">
-                <a href="index.html" class="tab-active px-6 py-3 text-sm font-semibold rounded-t-xl transition-all">
-                    Pentathlon Records
-                </a>
-                <a href="last-chance.html" class="tab-inactive px-6 py-3 text-sm font-semibold rounded-t-xl transition-all">
-                    Last Chance Records
-                </a>
-            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight tracking-tight mb-2">
+                Y-Swim Records Hub
+            </h1>
+            <p class="text-sky-100 text-lg font-medium opacity-90 max-w-2xl mx-auto">
+                Official and historical swimming records for YOTA and NJ LMSC.
+            </p>
         </div>
     </header>
 
-    <main class="flex-grow w-full max-w-[1400px] mx-auto px-2 sm:px-6 lg:px-8 py-8">
-        <div class="filter-card p-6 mb-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
-                <div class="space-y-1">
-                    <label for="filter-age" class="filter-label">Age Group</label>
-                    <select id="filter-age" class="filter-select">
-                        <option value="all">All Age Groups</option>
-                    </select>
-                </div>
-                <div class="space-y-1">
-                    <label for="filter-event" class="filter-label">Event</label>
-                    <select id="filter-event" class="filter-select">
-                        <option value="all">All Events</option>
-                    </select>
-                </div>
-                <div class="space-y-1">
-                    <label for="filter-gender" class="filter-label">Gender</label>
-                    <select id="filter-gender" class="filter-select">
-                        <option value="all">All</option>
-                        <option value="Women">Women</option>
-                        <option value="Men">Men</option>
-                        <option value="Mixed">Mixed</option>
-                    </select>
-                </div>
-                <div class="space-y-1">
-                    <label for="filter-club" class="filter-label">Club</label>
-                    <select id="filter-club" class="filter-select">
-                        <option value="all">All Clubs</option>
-                    </select>
-                </div>
-                <div class="space-y-1">
-                    <label for="filter-name" class="filter-label">Swimmer Name</label>
-                    <input type="text" id="filter-name" placeholder="Search name..." class="filter-input">
-                </div>
-                <div class="flex items-end">
-                    <button id="clear-filters" class="filter-btn w-full">Clear Filters</button>
-                </div>
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- NJ LMSC Section -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                    <span class="w-2 h-8 bg-amber-500 rounded-full"></span>
+                    NJ LMSC Records
+                </h2>
+                <p class="text-slate-500 mt-1 ml-5">New Jersey Local Masters Swimming Committee — Mercer, Monmouth, Ocean, and all NJ counties north</p>
             </div>
-        </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- SCY Records -->
+                <a href="njlmsc-scy.html" class="hub-card">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded">NJ LMSC</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">SCY Records</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Short Course Yards (25y) records for New Jersey Masters.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-amber-600 font-semibold text-sm">
+                        View Records <span class="ml-2">→</span>
+                    </div>
+                </a>
 
-        <div id="records-container" class="space-y-8">
-            <div class="text-center text-slate-500 py-12">Loading records data...</div>
-        </div>
+                <!-- SCM Records -->
+                <a href="njlmsc-scm.html" class="hub-card">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded">NJ LMSC</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">SCM Records</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Short Course Meters (25m) records for New Jersey Masters.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-amber-600 font-semibold text-sm">
+                        View Records <span class="ml-2">→</span>
+                    </div>
+                </a>
+
+                <!-- LCM Records -->
+                <a href="njlmsc-lcm.html" class="hub-card">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded">NJ LMSC</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">LCM Records</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Long Course Meters (50m) records for New Jersey Masters.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-amber-600 font-semibold text-sm">
+                        View Records <span class="ml-2">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Local Meet Records Section -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                    <span class="w-2 h-8 bg-sky-500 rounded-full"></span>
+                    Local Meet Records
+                </h2>
+                <p class="text-slate-500 mt-1 ml-5">Somerset County YMCA Pentathlon and Last Chance Records</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Pentathlon Records -->
+                <a href="pentathlon.html" class="hub-card">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-50 px-2 py-1 rounded">LOCAL</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Pentathlon Records</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Complete historical records for the Somerset County YMCA Pentathlon meet.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sky-600 font-semibold text-sm">
+                        View Records <span class="ml-2">→</span>
+                    </div>
+                </a>
+
+                <!-- Last Chance Records -->
+                <a href="last-chance.html" class="hub-card">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-50 px-2 py-1 rounded">LOCAL</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Last Chance Records</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Records established during the annual Last Chance meet.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-sky-600 font-semibold text-sm">
+                        View Records <span class="ml-2">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
-        <p class="text-center text-sm text-slate-500">&copy; 2025 Somerset County YMCA. All rights reserved.</p>
-        <p id="sheet-meta" class="text-center text-xs text-slate-400 mt-1"></p>
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 font-medium">&copy; 2025 Somerset County YMCA. All rights reserved.</p>
+            <div class="mt-4 flex justify-center gap-6">
+                <a href="https://www.usms.org/" target="_blank" class="text-xs text-slate-400 hover:text-sky-600 transition-colors">U.S. Masters Swimming</a>
+                <a href="https://www.njlmsc.org/" target="_blank" class="text-xs text-slate-400 hover:text-sky-600 transition-colors">NJ LMSC Official Site</a>
+            </div>
+        </div>
     </footer>
 
     <script src="main.js" defer></script>

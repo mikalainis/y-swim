@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Somerset County YMCA Records</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="site-header relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-0">
+            <div class="text-center mb-4">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/10 mb-3 border border-white/20">
+                    <span class="text-2xl">🏊</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight tracking-tight">
+                    Somerset County YMCA Records
+                </h1>
+                <p id="header-date" class="text-sky-300 text-sm font-medium mt-1">Loading date...</p>
+                <div class="mt-3 mb-5">
+                    <a href="https://www.usms.org/comp/meets/" target="_blank"
+                       class="text-sky-300 hover:text-white text-xs font-medium transition-colors underline underline-offset-2">
+                        U.S. Masters Swimming Event Results Database &rarr;
+                    </a>
+                </div>
+            </div>
+            <div class="flex justify-center gap-1">
+                <a href="index.html" class="tab-inactive px-4 py-3 text-sm font-semibold rounded-t-xl transition-all">
+                    Home
+                </a>
+                <a href="pentathlon.html" class="tab-active px-4 py-3 text-sm font-semibold rounded-t-xl transition-all">
+                    Pentathlon Records
+                </a>
+                <a href="last-chance.html" class="tab-inactive px-4 py-3 text-sm font-semibold rounded-t-xl transition-all">
+                    Last Chance Records
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-[1400px] mx-auto px-2 sm:px-6 lg:px-8 py-8">
+        <div class="filter-card p-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                <div class="space-y-1">
+                    <label for="filter-age" class="filter-label">Age Group</label>
+                    <select id="filter-age" class="filter-select">
+                        <option value="all">All Age Groups</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label for="filter-event" class="filter-label">Event</label>
+                    <select id="filter-event" class="filter-select">
+                        <option value="all">All Events</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label for="filter-gender" class="filter-label">Gender</label>
+                    <select id="filter-gender" class="filter-select">
+                        <option value="all">All</option>
+                        <option value="Women">Women</option>
+                        <option value="Men">Men</option>
+                        <option value="Mixed">Mixed</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label for="filter-club" class="filter-label">Club</label>
+                    <select id="filter-club" class="filter-select">
+                        <option value="all">All Clubs</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label for="filter-name" class="filter-label">Swimmer Name</label>
+                    <input type="text" id="filter-name" placeholder="Search name..." class="filter-input">
+                </div>
+                <div class="flex items-end">
+                    <button id="clear-filters" class="filter-btn w-full">Clear Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="records-container" class="space-y-8">
+            <div class="text-center text-slate-500 py-12">Loading records data...</div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+        <p class="text-center text-sm text-slate-500">&copy; 2025 Somerset County YMCA. All rights reserved.</p>
+        <p id="sheet-meta" class="text-center text-xs text-slate-400 mt-1"></p>
+    </footer>
+
+    <script src="main.js" defer></script>
+</body>
+</html>

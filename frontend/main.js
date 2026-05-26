@@ -1,7 +1,10 @@
 const PUBLISHED_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdeB9dzSRs5deGSfMBg75lc8gpW6GFOQ07fF_w-b5ZoDrHvJp-A6i5QZG9dL26NBX7wJGr2YN60aol';
 const PAGE_GIDS = {
-  'index.html': '1704234305',
-  'last-chance.html': '0'
+  'pentathlon.html': '1704234305',
+  'last-chance.html': '0',
+  'njlmsc-scy.html':  '1806285355',
+  'njlmsc-scm.html':  '438569775',
+  'njlmsc-lcm.html':  '1603815205'
 };
 
 const ELEMENT_IDS = {
@@ -15,8 +18,8 @@ const ELEMENT_IDS = {
 };
 
 function getSheetGid() {
-  const page = window.location.pathname.split('/').pop().toLowerCase();
-  return PAGE_GIDS[page] || '1704234305';
+  const page = window.location.pathname.split('/').pop().toLowerCase() || 'pentathlon.html';
+  return PAGE_GIDS[page] || PAGE_GIDS['pentathlon.html'];
 }
 
 function getElement(id) { return document.getElementById(id); }
@@ -74,8 +77,12 @@ function buildRecords(rows) {
           'm/f','date','club'].includes(lower);
       })
       .map(([key, value]) => key + ': ' + value).join(' • ');
-    return { ageGroup, event, time: rawTime || '', name, gender, details, source: values };
-  });
+    
+    // Column J (index 9) contains "*" for unofficial events
+    const isUnofficial = row[9] === '*';
+    
+    return { ageGroup, event, time: rawTime || '', name, gender, details, source: values, isUnofficial, rawTime, rawName };
+  }).filter(r => r.rawTime && r.rawName); // Only keep records with both time and name
 }
 
 function parseGender(text) {
@@ -201,16 +208,27 @@ function renderTable(records) {
     const mirrored = hasWomen && hasMen;
     const empty    = '<span class="text-slate-300">—</span>';
 
+    // Helper for event cell with unofficial badge
+    const eventCellHtml = (event, isUnofficial) => {
+      const badge = isUnofficial 
+        ? '<span class="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 border border-amber-200 uppercase tracking-wider">Unofficial</span>'
+        : '';
+      const name = isUnofficial ? '<i class="text-slate-500">' + escapeHtml(event) + '</i>' : escapeHtml(event);
+      return '<td class="event-cell">' + name + badge + '</td>';
+    };
+
     // Regular rows
     const regularRows = sortEvents(regularEvents).map(([event, sides]) => {
       const w = sides.women;
       const m = sides.men;
+      const isUnofficial = (w && w.isUnofficial) || (m && m.isUnofficial);
+      
       if (mirrored) {
         return '<tr class="record-row border-b border-slate-100">'
           + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (w ? escapeHtml(w.source['Date'] || '') : empty) + '</td>'
           + '<td class="px-3 py-3">'                                           + (w ? swimmerHtml(w.name, w.source['Club']) : empty) + '</td>'
           + '<td class="px-3 py-3 time-cell text-right border-r-2 border-pink-100">' + (w ? escapeHtml(w.time) : empty) + '</td>'
-          + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+          + eventCellHtml(event, isUnofficial)
           + '<td class="px-3 py-3 time-cell border-l-2 border-blue-100">'     + (m ? escapeHtml(m.time) : empty) + '</td>'
           + '<td class="px-3 py-3">'                                           + (m ? swimmerHtml(m.name, m.source['Club']) : empty) + '</td>'
           + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (m ? escapeHtml(m.source['Date'] || '') : empty) + '</td>'
@@ -218,7 +236,7 @@ function renderTable(records) {
       } else {
         const rec = w || m;
         return '<tr class="record-row border-b border-slate-100">'
-          + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+          + eventCellHtml(event, isUnofficial)
           + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (rec ? escapeHtml(rec.source['Date'] || '') : empty) + '</td>'
           + '<td class="px-3 py-3">'                                           + (rec ? swimmerHtml(rec.name, rec.source['Club']) : empty) + '</td>'
           + '<td class="px-3 py-3 time-cell">'                                 + (rec ? escapeHtml(rec.time) : empty) + '</td>'
@@ -238,7 +256,7 @@ function renderTable(records) {
         + sortEvents(mixedEvents).map(([event, sides]) => {
             const mx = sides.mixed;
             return '<tr class="record-row border-b border-slate-100">'
-              + '<td class="event-cell">' + escapeHtml(event) + '</td>'
+              + eventCellHtml(event, mx ? mx.isUnofficial : false)
               + '<td class="px-3 py-3 text-xs text-slate-500 whitespace-nowrap">' + (mx ? escapeHtml(mx.source['Date'] || '') : empty) + '</td>'
               + '<td class="px-3 py-3">'                                           + (mx ? swimmerHtml(mx.name, mx.source['Club']) : empty) + '</td>'
               + '<td class="px-3 py-3 time-cell">'                                 + (mx ? escapeHtml(mx.time) : empty) + '</td>'
@@ -413,6 +431,9 @@ function setupEventListeners(baseRecords) {
 }
 
 async function init() {
+  const page = window.location.pathname.split('/').pop().toLowerCase() || 'index.html';
+  if (page === 'index.html' || page === '') return; // Don't run on hub page
+
   const sheetGid = getSheetGid();
   showMessage('Loading records data...');
   updateSheetMeta('Fetching live sheet data...');
