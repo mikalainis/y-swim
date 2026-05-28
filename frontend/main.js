@@ -36,20 +36,55 @@ function getColumnValue(row, keys) {
 }
 
 function parseCsv(text) {
-  return text.replace(/\r\n/g, '\n').split('\n').filter(line => line.trim() !== '').map(line => {
-    const cells = []; let current = ''; let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      if (inQuotes) {
-        if (char === '"') { if (line[i+1] === '"') { current += '"'; i++; } else { inQuotes = false; } }
-        else { current += char; }
-      } else if (char === '"') { inQuotes = true; }
-      else if (char === ',') { cells.push(current); current = ''; }
-      else { current += char; }
+  const rows = [];
+  let cells = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (inQuotes) {
+      if (char === '"') {
+        if (text[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += char;
+      }
+    } else {
+      if (char === '"') {
+        inQuotes = true;
+      } else if (char === ',') {
+        cells.push(current);
+        current = '';
+      } else if (char === '\n' || char === '\r') {
+        if (char === '\r' && text[i + 1] === '\n') {
+          i++;
+        }
+        cells.push(current);
+        // Only add non-empty rows
+        if (cells.some(c => c.trim() !== '')) {
+          rows.push(cells);
+        }
+        cells = [];
+        current = '';
+      } else {
+        current += char;
+      }
     }
+  }
+  
+  if (current !== '' || cells.length > 0) {
     cells.push(current);
-    return cells;
-  });
+    if (cells.some(c => c.trim() !== '')) {
+      rows.push(cells);
+    }
+  }
+  
+  return rows;
 }
 
 function buildRecords(rows) {
