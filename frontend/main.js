@@ -103,7 +103,17 @@ function buildRecords(rows) {
     const ageGroup  = rawAge    || parseAgeGroup(rawEvent);
     const gender    = rawGender || parseGender(rawEvent);
     const event     = rawEvent  || buildFallbackEvent(values);
-    const name      = rawName   || buildFallbackName(values, event);
+    let name        = rawName   || buildFallbackName(values, event);
+
+    // NJLMSC: Add age from Column I if present
+    const page = window.location.pathname.split('/').pop().toLowerCase();
+    if (['njlmsc-scy.html', 'njlmsc-scm.html', 'njlmsc-lcm.html'].includes(page)) {
+      const ageColI = normalizeText(row[8]); // Column I is index 8
+      if (ageColI) {
+        name += ' (' + ageColI + ')';
+      }
+    }
+
     const details   = Object.entries(values)
       .filter(([key, value]) => {
         const lower = key.toLowerCase();
