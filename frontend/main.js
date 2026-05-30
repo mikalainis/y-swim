@@ -317,13 +317,13 @@ function renderTable(records) {
     // Headers — mirrored or single
     const thead1 = mirrored
       ? '<tr>'
-        + '<th colspan="3" class="gender-header-women">♀ WOMEN</th>'
-        + '<th class="gender-header-spacer px-3 py-2"></th>'
-        + '<th colspan="3" class="gender-header-men">♂ MEN</th>'
+        + '<th colspan="3" class="gender-header-women">WOMEN</th>'
+        + '<th colspan="1" class="gender-header-spacer"></th>'
+        + '<th colspan="3" class="gender-header-men">MEN</th>'
         + '</tr>'
       : '<tr>'
-        + (hasWomen ? '<th colspan="4" class="gender-header-women">♀ WOMEN</th>' : '')
-        + (hasMen   ? '<th colspan="4" class="gender-header-men">♂ MEN</th>' : '')
+        + (hasWomen ? '<th colspan="4" class="gender-header-women">WOMEN</th>' : '')
+        + (hasMen   ? '<th colspan="4" class="gender-header-men">MEN</th>' : '')
         + (!hasWomen && !hasMen && hasMixed
           ? '<th colspan="4" style="background:linear-gradient(90deg,#faf5ff,#ede9fe);color:#6b21a8;font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:800;letter-spacing:0.12em;text-align:center;padding:0.5rem 0.75rem;">⚡ MIXED</th>'
           : '')
