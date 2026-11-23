@@ -6,6 +6,3 @@
 infra
 *.md
 *.py
-firebase.json
-.firebaserc
-firestore.*
