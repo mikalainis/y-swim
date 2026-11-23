@@ -1,0 +1,11 @@
+.git
+.github
+.idx
+.vscode
+.devcontainer
+infra
+*.md
+*.py
+firebase.json
+.firebaserc
+firestore.*

@@ -34,7 +34,7 @@ Historical and meet-specific records for Somerset County YMCA:
 - **Mirrored layout** — Women on left, Men on right when both exist; single column when only one gender has records.
 - **Mixed section** — relay and mixed gender records shown separately at the bottom of each age group.
 - **Mobile responsive** — works on phones at poolside.
-- **Auto-deploys** — every push to `main` triggers Firebase deployment via GitHub Actions CI/CD.
+- **Auto-deploys** — every push to `main` builds and deploys to Google Cloud Run via GitHub Actions (no stored keys).
 
 ---
 
@@ -46,7 +46,7 @@ Historical and meet-specific records for Somerset County YMCA:
 | Styling | Tailwind CSS (CDN) + shared `style.css` |
 | Fonts | Montserrat, Roboto, Roboto Mono (Google Fonts) |
 | Data | Google Sheets (live CSV API) |
-| Hosting | Firebase Hosting |
+| Hosting | Google Cloud Run (nginx container), project `pentathlon-records`, region `us-east4` |
 | CI/CD | GitHub Actions |
 
 ---
@@ -66,8 +66,15 @@ Historical and meet-specific records for Somerset County YMCA:
 │   └── style.css           # Shared styles for all pages
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml      # CI/CD — auto-deploy to Firebase on push
-├── firebase.json           # Firebase hosting config
+│       ├── deploy-cloud-run.yml  # CI/CD — build + deploy to Cloud Run on push to main
+│       └── deploy.yml            # old Firebase Hosting deploy (removed after the DNS switch)
+├── Dockerfile              # nginx image that serves frontend/ as-is (no build step)
+├── nginx.conf              # web server config: caching, www → y-swim.com redirect
+├── infra/gcp/
+│   ├── bootstrap.sh        # one-time Google Cloud setup (run in Cloud Shell)
+│   ├── domain.sh           # maps y-swim.com + www to Cloud Run, prints DNS records
+│   └── production.env      # project/region/service-account names (not secrets)
+├── firebase.json           # old Firebase config (removed after the DNS switch)
 └── GEMINI.md               # AI agent instructions for this project
 ```
 
@@ -119,16 +126,49 @@ python3 -m http.server 8080
 
 ## Deployment
 
-Deployment is fully automated via GitHub Actions CI/CD:
+Deployment is fully automated: every push to `main` runs `.github/workflows/deploy-cloud-run.yml`,
+which builds the nginx image, deploys it to Cloud Run, and checks every page loads (~2 minutes).
 
 ```bash
 git add .
 git commit -m "Your change description"
 git push
-# Firebase deploys automatically in ~60 seconds
 ```
 
-Manual deployment:
+GitHub signs in to Google Cloud through Workload Identity Federation, limited to this repo's
+`main` branch, so there is no service-account key to store, rotate or leak. Updating records
+in the Google Sheet never needs a deploy.
+
+To test the exact production container locally (needs Docker):
+
 ```bash
-firebase deploy --project scym-pentathlon-records-2025
+docker build -t y-swim . && docker run --rm -p 8080:8080 y-swim
+# Open http://localhost:8080
 ```
+
+---
+
+## Moving from Firebase Hosting to Cloud Run (one-time checklist)
+
+The site stays live on Firebase until step 4, so there is no downtime.
+
+1. **Billing.** In the Firebase console for project `pentathlon-records`, upgrade to the
+   Blaze (pay-as-you-go) plan if it isn't already. Optional: set a budget alert of a few dollars.
+   A site this size normally stays inside Cloud Run's free tier.
+2. **Google Cloud setup.** Open [Cloud Shell](https://shell.cloud.google.com) as a project Owner and run:
+   ```bash
+   git clone https://github.com/mikalainis/y-swim && cd y-swim
+   bash infra/gcp/bootstrap.sh
+   ```
+   Paste the lines it prints into `infra/gcp/production.env` and push to `main`.
+3. **First deploy.** That push deploys to Cloud Run. Open the `*.run.app` URL shown on the
+   Actions run and check every page.
+4. **Domain.** In Cloud Shell: `gcloud domains verify y-swim.com` (once), then
+   `bash infra/gcp/domain.sh`. At Squarespace Domains, replace the Firebase records for `@` and
+   `www` with the ones the script prints (keep the Google Workspace MX/TXT records).
+   HTTPS certificates for both `y-swim.com` and `www.y-swim.com` are issued automatically
+   within about an hour; `www` redirects to `y-swim.com`.
+5. **Retire Firebase Hosting** once y-swim.com loads from Cloud Run: delete
+   `.github/workflows/deploy.yml`, `firebase.json`, `.firebaserc` and `firestore.*`, delete the
+   `FIREBASE_SERVICE_ACCOUNT` secret in GitHub, delete that service account's key in
+   Google Cloud IAM, and run `firebase hosting:disable --project pentathlon-records`.

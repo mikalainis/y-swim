@@ -42,9 +42,9 @@ After ANY change, confirm:
 
 This is a mobile-responsive web app displaying swimming pentathlon records for Somerset County YMCA. It replaces a static PDF system with a live, searchable interface.
 
-- **Live site:** https://pentathlon-records.web.app/
+- **Live site:** https://y-swim.com
 - **GitHub repo:** y-swim
-- **Firebase project:** scym-pentathlon-records-2025
+- **Hosting:** Google Cloud Run (project `pentathlon-records`, region `us-east4`); see README "Deployment"
 
 ## 📂 Project Structure
 
@@ -125,20 +125,14 @@ const PAGE_GIDS = {
 
 - **Frontend:** HTML5, JavaScript ES6 Modules — NO React, NO Vue, NO Next.js
 - **Styling:** Tailwind CSS via CDN
-- **Hosting:** Firebase Hosting
+- **Hosting:** Google Cloud Run — `Dockerfile` + `nginx.conf` serve `frontend/` as-is
 - **Database:** Firestore configured but optional — current version uses embedded JSON
 
 ## 🚀 Deployment
 
-```bash
-firebase deploy --project scym-pentathlon-records-2025
-```
-
-If authentication is needed in a cloud terminal:
-```bash
-firebase login:ci
-firebase deploy --token "YOUR_TOKEN" --project scym-pentathlon-records-2025
-```
+Push to `main`. `.github/workflows/deploy-cloud-run.yml` builds the image and deploys to
+Cloud Run (project `pentathlon-records`, region `us-east4`) with keyless sign-in.
+Do not add `firebase deploy` steps or service-account keys.
 
 ## 🎨 Design Conventions
 
@@ -159,7 +153,7 @@ firebase deploy --token "YOUR_TOKEN" --project scym-pentathlon-records-2025
 7. **Column mapping is flexible** — `main.js` handles varied Sheet header names via `getColumnValue()`
 8. **Match existing design system** — use sky-500 accent, slate color palette, Montserrat/Roboto fonts
 9. **Both pages must work** — test `index.html` AND `last-chance.html` after any `main.js` change
-10. **Deploy command:** `firebase deploy --project scym-pentathlon-records-2025`
+10. **Deploy:** push to `main` (Cloud Run via GitHub Actions)
 
 ## 📝 How to Add a New Meet Page
 
