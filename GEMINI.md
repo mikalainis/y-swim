@@ -55,9 +55,9 @@ This is a mobile-responsive web app displaying swimming pentathlon records for S
 │   ├── last-chance.html  # Last Chance Meet Records page
 │   ├── main.js           # ALL shared app logic (fetch, parse, filter, render)
 │   └── style.css         # Additional custom styles (beyond Tailwind)
-├── firebase.json         # Firebase hosting config
-├── firestore.rules       # Firestore security rules
-├── firestore.indexes.json
+├── Dockerfile            # nginx image serving frontend/ (Cloud Run)
+├── nginx.conf            # web server config (caching, www → apex redirect)
+├── infra/gcp/            # one-time Google Cloud setup + domain scripts
 └── GEMINI.md
 ```
 
@@ -177,7 +177,7 @@ These guidelines define the operational principles and capabilities of an AI age
 The AI operates within the Firebase Studio development environment, which provides a Code OSS-based IDE and a simple, pre-configured environment for web development.
 
 - **Project Structure:** Primary entry point is `frontend/index.html`
-- **Firebase Integration:** Uses Firebase Hosting and optionally Firestore
+- **Hosting:** Google Cloud Run (no Firebase Hosting, no Firestore)
 - **Preview Server:** Run `python3 -m http.server 8080` from the `frontend/` folder
 
 ## Code Modification & Dependency Management
